@@ -1,0 +1,23 @@
+/* Estilo para centrar el spinner en su contenedor */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ocupa toda la altura del viewport */
+}
+
+/* Estilo del spinner (círculo que gira) */
+.spinner {
+    border: 8px solid rgba(0, 0, 0, 0.1); /* Color de la parte exterior */
+    border-top: 8px solid #3498db; /* Color de la parte que gira */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+/* Animación del spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
