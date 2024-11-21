@@ -50,16 +50,13 @@ const UserProvider = ({ children }) => {
   useEffect(() => {
     const initializeUser = async () => {
       const storedUser = JSON.parse(localStorage.getItem('user'));
-      console.log("Valor inicial de storedUser:", storedUser);
       if (storedUser?.token) {
         try {
           const decodedToken = jwtDecode(storedUser.token);
           const now = Math.floor(Date.now() / 1000); // Fecha actual en segundos
-          console.log("aaa", decodedToken.exp);
-          console.log("bbb", now);
+          
           if (decodedToken.exp > now) {
             setUser(storedUser);
-            console.log("Usuario válido:", storedUser);
           } else {
             console.log("Token expirado, eliminando usuario...");
             localStorage.removeItem('user');
