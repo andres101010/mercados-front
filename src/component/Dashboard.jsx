@@ -1,6 +1,67 @@
 
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
+// Registrar los componentes en Chart.js
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const Dashboard = () => {
+   // Datos para el gráfico
+   const data = {
+    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
+    datasets: [
+      {
+        label: "Ventas 2024",
+        data: [30, 45, 60, 70, 90, 100], // Datos numéricos
+        backgroundColor: "rgba(75, 192, 192, 0.5)", // Color de las barras
+        borderColor: "rgba(75, 192, 192, 1)", // Color del borde
+        borderWidth: 1, // Ancho del borde
+      },
+    ],
+  };
+
+  // // Opciones para personalizar el gráfico
+  // const options = {
+  //   responsive: true,
+  //   plugins: {
+  //     legend: {
+  //       position: "top", // Posición de la leyenda
+  //     },
+  //     title: {
+  //       display: true,
+  //       text: "Gráfico de Barras - Ventas Mensuales",
+  //     },
+  //   },
+  // };
+
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Ventas Diarias",
+      },
+    },
+  };
+
+  // Información para los cuadros estadísticos
+  const stats = [
+    { label: "Total Ventas", value: "$7,600", color: "green" },
+    { label: "No Ventas", value: "12 días", color: "red" },
+    { label: "Promedio Diario", value: "$1,520", color: "blue" },
+    { label: "Mejor Día", value: "Viernes ($2,200)", color: "purple" },
+  ];
+
   return (
     <div className="right_col" role="main">
           {/* <div className="row" style="display: inline-block;">
@@ -557,6 +618,45 @@ const Dashboard = () => {
                 </div>
               </div>
             </div> */}
+
+<div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h2 style={{ textAlign: "center" }}>Dashboard de Rendimiento</h2>
+
+      {/* Sección de Cuadros Estadísticos */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+          gap: "20px",
+          marginBottom: "40px",
+        }}
+      >
+        {stats.map((stat, index) => (
+          <div
+            key={index}
+            style={{
+              padding: "20px",
+              borderRadius: "8px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              textAlign: "center",
+              backgroundColor: stat.color,
+              color: "white",
+            }}
+          >
+            <h3 style={{ margin: "0", fontSize: "1.2em" }}>{stat.label}</h3>
+            <p style={{ margin: "5px 0", fontSize: "1.5em", fontWeight: "bold" }}>
+              {stat.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Gráfico de Barras */}
+      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+        <Bar data={data} options={barOptions} />
+      </div>
+    </div>
+  
           </div>
   );
 };
