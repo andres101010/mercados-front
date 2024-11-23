@@ -46,6 +46,7 @@ const UsePuestos = () => {
 
     isEditModalVisible,
     currentLocation,
+    setCurrentLocation,
     handleEdit,
 
     puestos,

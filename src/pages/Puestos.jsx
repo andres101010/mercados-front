@@ -19,6 +19,7 @@ const Puestos = () => {
     handleCancel,
     isEditModalVisible,
     currentLocation,
+    setCurrentLocation,
     handleEdit ,
     puestos,
     setPuestos,
@@ -103,7 +104,6 @@ const Puestos = () => {
     });
     }
   }
-
   const onFinishEdit = async () => {
     try {
       const body ={
@@ -111,7 +111,9 @@ const Puestos = () => {
         carnet: currentLocation.carnet,
         number: currentLocation.number,
         fecha: currentLocation.fecha,
-        arrendatario: currentLocation.arrendatario
+        arrendatario: arrendatarios?.map((row)=>row._id),
+        mercado: currentLocation.mercado,
+        newNumber: currentLocation.newNumber
       }
       await editLocal(body, currentLocation._id)
       await handleGetLocal(place)
@@ -141,7 +143,7 @@ const Puestos = () => {
   useEffect(() => {
     if (currentLocation) {
       form.setFieldsValue({
-        nombre: currentLocation.name,
+        nombre: currentLocation.nombre,
         carnet: currentLocation.carnet,
         number: currentLocation.number,
         arrendatario: arrendatarios.map((row) => row.name),
@@ -149,6 +151,17 @@ const Puestos = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation, form]);
+
+  const onValuesChange = (changedValues, allValues) => {
+    setCurrentLocation((prev) => ({
+      ...prev,
+      ...allValues,
+      ...(changedValues.nombre && { nombre: changedValues.nombre }), // Solo agregar si se modifica
+      ...(changedValues.number && { newNumber: changedValues.number }),
+    }));
+  };
+  
+  console.log("currentLocation", currentLocation);
   return (
     <div>
       <div className="right_col" role="main">
@@ -161,101 +174,21 @@ const Puestos = () => {
               onCancel={handleCancel}
               footer={null}
             >
-              {/* {currentLocation && (
-                <Form
-                  layout="vertical"
-                  name="edit-form"
-                  initialValues={{
-                    nombre: currentLocation.name,
-                    carnet: currentLocation.carnet,
-                    number: currentLocation.number,
-                    // fecha: currentLocation.fechaDeContrato,
-                    arrendatario: arrendatarios.map((row)=>row.name)
-                  }}
-                  onFinish={onFinishEdit} // Define `onFinishEdit` para procesar los datos editados
-                >
-                  <Form.Item
-                    label="Nombre del Mercado"
-                    name="nombre"
-                    rules={[{ required: true, message: 'Por favor ingrese el nombre del mercado!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Carnet"
-                    name="carnet"
-                    rules={[{ required: true, message: 'Por favor ingrese El Carnet!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Numero Del Puesto"
-                    name="number"
-                    rules={[{ required: true, message: 'Por favor ingrese el Numero del Puesto!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Fecha Del Contrato"
-                    name="fecha"
-                    
-                    rules={[{ required: true, message: 'Por favor ingrese La Fecha del Contrato!' }]}
-                  >
-                    <DatePicker format="YYYY-MM-DD" />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Arrendartario"
-                    name="arrendatario"
-                    rules={[{ required: false, message: 'Por favor seleccione El Arrendatario!' }]}
-                  >
-                    <Select placeholder="Seleccione uno">
-                      {
-                        arrendatarios.length == 0 ? 
-                        (<Option>No Hay Datos..</Option>)
-                        :
-                        (arrendatarios.map((row, i)=>{
-                          return(
-                            <Option key={i} value={row.name}>{row.name}</Option>
-                          )
-                        }
-                        ))
-                      }
-                      
-                    </Select>
-                    </Form.Item>
-
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-                    <Button onClick={handleCancel} style={{ marginRight: '10px' }}>
-                      Cerrar
-                    </Button>
-                    <Button type="primary" htmlType="submit">
-                      Guardar Cambios
-                    </Button>
-                  </div>
-                </Form>
-              )} */}
+             
               {currentLocation &&  (
                   <Form
                     form={form}
                     key={currentLocation._id}
+                    onValuesChange={onValuesChange}
                     layout="vertical"
                     name="edit-form"
-                    // initialValues={{
-                    //   nombre: currentLocation.name,
-                    //   carnet: currentLocation.carnet,
-                    //   number: currentLocation.number,
-                    //   arrendatario: arrendatarios.map((row) => row.name),
-                    // }}
+                   
                     onFinish={onFinishEdit} // Define `onFinishEdit` para procesar los datos editados
                   >
                     <Form.Item
-                      label="Nombre del Mercado"
+                      label="Nombre "
                       name="nombre"
-                      rules={[{ required: true, message: 'Por favor ingrese el nombre del mercado!' }]}
+                      rules={[{ required: true, message: 'Por favor ingrese el nombre !' }]}
                     >
                       <Input />
                     </Form.Item>
