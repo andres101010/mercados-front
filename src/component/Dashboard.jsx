@@ -10,35 +10,36 @@ import {
   Legend,
 } from "chart.js";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // Registrar los componentes en Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const Dashboard = () => {
 
 const url = import.meta.env.VITE_URL_LOCAL;
-   
+   const [info, setInfo] = useState([])
 
-   const info = async () => {
+   const getInfo = async () => {
     try {
       const result = await axios.get(`${url}/getInfo`, {withCredentials: true});
-      console.log("result: ", result);
+      setInfo(result.data);
     } catch (error) {
       console.log("Error: ", error);
     }
    }
 
    useEffect(()=>{
-    info()
+    getInfo()
    // eslint-disable-next-line react-hooks/exhaustive-deps
    },[])
 
+   console.log("info", info);
    // Datos para el gráfico
    const data = {
-    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
+    labels: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"],
     datasets: [
       {
-        label: "Ventas 2024",
-        data: [30, 45, 60, 70, 90, 100], // Datos numéricos
+        label: "Pagos",
+        data: [30, 45, 60, 70, 90, 100, 150], // Datos numéricos
         backgroundColor: "rgba(75, 192, 192, 0.5)", // Color de las barras
         borderColor: "rgba(75, 192, 192, 1)", // Color del borde
         borderWidth: 1, // Ancho del borde
@@ -63,10 +64,10 @@ const url = import.meta.env.VITE_URL_LOCAL;
 
   // Información para los cuadros estadísticos
   const stats = [
-    { label: "Pagos Hoy", value: "$7,600", color: "green" },
-    { label: "No pagados Hoy", value: "12 días", color: "red" },
-    { label: "Total de mercados", value: "$1,520", color: "blue" },
-    { label: "Total de arrendatarios", value: "Viernes ($2,200)", color: "purple" },
+    { label: "Pagos Total Esta Semana", value:info?.result?.montoPagado ? `$ ${info?.result?.montoPagado}` : "", color: "green" },
+    { label: "Dias No Pagados Esta Semana", value: info?.result?.fechasNoPagadas ? `${info?.result?.fechasNoPagadas?.length} días` : "", color: "red" },
+    { label: "Total de Mercados", value: info?.mercados, color: "blue" },
+    { label: "Total de Arrendatarios", value: info.arrendatarios, color: "purple" },
   ];
 
   return (

@@ -111,7 +111,8 @@ const Puestos = () => {
         carnet: currentLocation.carnet,
         number: currentLocation.number,
         fecha: currentLocation.fecha,
-        arrendatario: arrendatarios?.map((row)=>row._id),
+        // arrendatario: arrendatarios?.map((row)=>row._id),
+        arrendatario: currentLocation.arrendatario,
         mercado: currentLocation.mercado,
         newNumber: currentLocation.newNumber
       }
@@ -143,12 +144,17 @@ const Puestos = () => {
   useEffect(() => {
     if (currentLocation) {
       form.setFieldsValue({
-        nombre: currentLocation.nombre,
+        nombre: currentLocation.nombre || currentLocation.name,
         carnet: currentLocation.carnet,
         number: currentLocation.number,
-        arrendatario: arrendatarios.map((row) => row.name),
+        arrendatario: arrendatarios?.map((row) => {
+          const match = currentLocation?.arrendatario == row._id
+          return match ? row.name : currentLocation.name; // Devuelve el nombre si hay coincidencia, de lo contrario null
+      }),
+        // arrendatario: currentLocation.nombre,
       });
     }
+   
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation, form]);
 

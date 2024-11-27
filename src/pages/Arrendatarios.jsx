@@ -600,16 +600,16 @@ const Arrendatarios = () => {
                                                              style={{
                                                               textAlign:'center',
                                                               width: '100%',
-                                                              backgroundColor: 'darkcyan',
+                                                              backgroundColor: row.local.length == 0 ? 'red' : 'darkcyan',
                                                               borderRadius: '5px',
                                                               color: 'white' 
                                                             }}
                                                             >{row.local.length == 0 ? 'Sin Asignar' : row.local.map((file)=>file.number).join(', ')}</label></td>
 
-                                                            <td><button type="button" className="btn btn-warning fa fa-money" data-toggle="modal" data-target="#PagarCanchaje" onClick={()=>handleShowModalPago(row,row.id)} disabled={row.local == 0} ></button>
+                                                            <td><button type="button" className="btn btn-warning fa fa-money" data-toggle="modal" data-target="#PagarCanchaje" onClick={()=>handleShowModalPago(row,row.id)} disabled={row.local == 0} style={{backgroundColor:row.local == 0 ? 'gray' : null}}></button>
                                                       </td>
                                                       <td>
-                                                          <button type="button" className="btn btn-info fa fa-file-pdf-o" disabled={row.local == 0}></button>
+                                                          <button type="button" className="btn btn-info fa fa-file-pdf-o" disabled={row.local == 0} style={{backgroundColor:row.local == 0 ? 'gray' : null}}></button>
       
                                                       </td>
                                                         </tr>
