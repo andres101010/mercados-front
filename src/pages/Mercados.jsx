@@ -17,6 +17,8 @@ const Mercados = () => {
           currentLocation,
           handleEdit ,
           // handleDelete,
+          valueInput,
+          setValueInput
         } = useMercados();
 
 
@@ -92,7 +94,7 @@ const Mercados = () => {
   const initialValues = { nombre: '', direccion: '', mapLink: ''};
 
   const onFinish = async (values) => {
-    console.log('Datos del formulario:', values);
+    // console.log('Datos del formulario:', values);
     try {
       await createMercado(values)
       Swal.fire({
@@ -151,7 +153,7 @@ const Mercados = () => {
 
   const handleDelete = async (location) => {
     // setCurrentLocation(location._id); 
-    console.log("deleting location", location._id);
+    // console.log("deleting location", location._id);
     try {
       await deleteMercado(location._id);
       Swal.fire({
@@ -173,7 +175,11 @@ const Mercados = () => {
     }
 }
 
- 
+  const data = !valueInput ? mercados.data : mercados.data.filter((datos)=> datos.nombre.toLocaleLowerCase().includes(valueInput.toLocaleLowerCase()));
+
+  const handleData = (e) => {
+    setValueInput(e.target.value)
+  }
 
   return (
     <div className="nav-md">
@@ -332,6 +338,20 @@ const Mercados = () => {
                                           <p className="text-muted font-13 m-b-30">
                                               El Gobierno Autonomo Municipal de Tarija - Cercado tiene la jurisdiccion de designar en calidad de arriendo, los puestos de Cada mercado de la provincia cercado en la ciudada de Tarija, manteniendo el orden y el uso adecuado de los puestos dedicados al comercio.
                                           </p>
+                                          <div className="d-flex justify-content-end">
+                                          <div className="input-group" style={{ width: '200px' }}>
+                                            <span className="input-group-text bg-light">
+                                               <i className="fas fa-search"></i>
+                                            </span>
+                                            <input 
+                                              type="text" 
+                                              className="form-control shadow-sm" 
+                                              placeholder="Buscar" 
+                                              onChange={handleData} 
+                                            />
+                                          </div>
+                                        </div>
+
                                           <table id="datatable" className="table table-striped table-bordered" style={{width:"100%" }}>
                                               <thead>
                                                   <tr>
@@ -348,7 +368,7 @@ const Mercados = () => {
                                           
 
                                               <tbody>
-                                                      {mercados?.data.map((location, index) => (
+                                                      {data?.map((location, index) => (
                                                         <tr key={index}>
                                                           <td>{location.nombre}</td>
                                                           <td>{location.local ? location.local : 0}</td>

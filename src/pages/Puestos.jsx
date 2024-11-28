@@ -25,7 +25,9 @@ const Puestos = () => {
     setPuestos,
     arrendatarios,
     setArrendatarios ,
-    form
+    form,
+    valueInput,
+    setValueInput
   } = UsePuestos();
 
   // const datos = [
@@ -79,9 +81,9 @@ const Puestos = () => {
     handleGetArrendatarios(place);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[place])
-  console.log("puestossssssss", puestos);
-  console.log("arre", arrendatarios);
-  console.log("currentLocation", currentLocation);
+  // console.log("puestossssssss", puestos);
+  // console.log("arre", arrendatarios);
+  // console.log("currentLocation", currentLocation);
  
   const handleCreateLocal = async () => {
     try {
@@ -166,8 +168,10 @@ const Puestos = () => {
       ...(changedValues.number && { newNumber: changedValues.number }),
     }));
   };
-  
-  console.log("currentLocation", currentLocation);
+  const data = !valueInput ? puestos : puestos.filter((row)=> row.name.toLowerCase().includes(valueInput.toLowerCase()) || row.number.toString().includes(valueInput));
+  const handleData = (e) => {
+    setValueInput(e.target.value)
+  }
   return (
     <div>
       <div className="right_col" role="main">
@@ -289,6 +293,17 @@ const Puestos = () => {
                     </div> */}
 
                     <div>
+                    <div className="input-group" style={{ width: '200px' }}>
+                                            <span className="input-group-text bg-light">
+                                               <i className="fas fa-search"></i>
+                                            </span>
+                                            <input 
+                                              type="text" 
+                                              className="form-control shadow-sm" 
+                                              placeholder="Buscar" 
+                                              onChange={handleData} 
+                                            />
+                    </div>
                     <table id="datatable-buttons" className="table table-striped table-bordered" style={{width:"100%"}}>
                       <thead>
                         <tr>
@@ -353,7 +368,7 @@ const Puestos = () => {
                       </tbody> */}
 
                       <tbody>
-                        { puestos.length === 0 ?
+                        { data.length === 0 ?
                         (
                           <tr>
                             <td colSpan="6" style={{textAlign:'center'}}><span>No Hay Datos</span></td>
@@ -364,7 +379,7 @@ const Puestos = () => {
                           </tr>
                         ) :
                         
-                          puestos?.map((dato, index) => (
+                          data?.map((dato, index) => (
                             <tr key={index}>
                               <td>
                                 <label style={{

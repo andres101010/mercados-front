@@ -8,6 +8,10 @@ const UsePuestos = () => {
 
     const [puestos, setPuestos] = useState([]);
     const [arrendatarios, setArrendatarios] = useState([]);
+
+    const [valueInput, setValueInput] = useState(null);
+
+
     const showModal = () => {
         console.log("click modal");
         setIsModalVisible(true);
@@ -55,7 +59,11 @@ const UsePuestos = () => {
     arrendatarios,
     setArrendatarios , 
 
-    form
+    form,
+
+    
+    valueInput,
+    setValueInput
    }
     
   

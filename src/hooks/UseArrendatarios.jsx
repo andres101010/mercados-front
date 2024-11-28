@@ -14,6 +14,9 @@ const UseArrendatarios = () => {
 
     const [weekOffset, setWeekOffset] = useState(0); 
 
+    const [valueInput, setValueInput] = useState(null);
+
+
     const togglePagos = () => {
         setMostrarPagados((prev) => !prev);
     };
@@ -79,7 +82,10 @@ const UseArrendatarios = () => {
     mostrarPagados,
     togglePagos,
     weekOffset,
-    setWeekOffset
+    setWeekOffset,
+
+    valueInput,
+    setValueInput
   }
     
   

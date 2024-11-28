@@ -39,7 +39,7 @@ const url = import.meta.env.VITE_URL_LOCAL;
     datasets: [
       {
         label: "Pagos",
-        data: [30, 45, 60, 70, 90, 100, 150], // Datos numéricos
+        data: [info?.pagosPorDia?.lunes, info?.pagosPorDia?.martes, info?.pagosPorDia?.miercoles, info?.pagosPorDia?.jueves, info?.pagosPorDia?.vienes, info?.pagosPorDia?.sabado, info?.pagosPorDia?.domingo], // Datos numéricos
         backgroundColor: "rgba(75, 192, 192, 0.5)", // Color de las barras
         borderColor: "rgba(75, 192, 192, 1)", // Color del borde
         borderWidth: 1, // Ancho del borde

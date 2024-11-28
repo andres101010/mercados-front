@@ -4,7 +4,7 @@ const useMercados = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
-
+    const [valueInput, setValueInput] = useState(null);
 
     const showModal = () => {
         console.log("click modal");
@@ -44,7 +44,8 @@ const useMercados = () => {
     handleEdit,
     // handleDelete,
     
- 
+    valueInput,
+    setValueInput
   }
 }
 

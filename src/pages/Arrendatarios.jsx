@@ -33,7 +33,9 @@ const Arrendatarios = () => {
             mostrarPagados,
             togglePagos,
             weekOffset,
-            setWeekOffset
+            setWeekOffset,
+            valueInput,
+            setValueInput
     } = UseArrendatarios();
     const { place } = useParams();
 
@@ -174,6 +176,10 @@ const Arrendatarios = () => {
     }
   };
 
+  const data = !valueInput ? arrendatario : arrendatario.filter((row)=>row.name.toLowerCase().includes(valueInput.toLowerCase()));
+  const handleData = (e) => {
+    setValueInput(e.target.value)
+  }
 
   return (
     <div>
@@ -530,9 +536,21 @@ const Arrendatarios = () => {
                                           <p className="text-muted font-13 m-b-30">
                                               El Gobierno Autonomo Municipal de Tarija - Cercado tiene la jurisdiccion de designar en calidad de arriendo, los puestos de Cada mercado de la provincia cercado en la ciudada de Tarija, manteniendo el orden y el uso adecuado de los puestos dedicados al comercio.
                                           </p>
-                                          <div className="dropdown">
+                                          <div className="d-flex justify-content-between align-items-center">
                                              <button type="button"  data-toggle="modal" data-target="#NuevoMercado" style={{color:'white', backgroundColor:'#17a2b8', textTransform: 'none !important', fontSize:'14px', padding: '.375rem .75rem', borderRadius:'3px', borderColor:'#17a2b8', border:'solid 1px transparent'}}  onClick={() => showModal() } >  <i className="fa fa-plus" style={{ marginRight: '4px' }} ></i>Nuevo</button>
+                                             <div className="input-group" style={{ width: '200px' }}>
+                                            <span className="input-group-text bg-light">
+                                               <i className="fas fa-search"></i>
+                                            </span>
+                                            <input 
+                                              type="text" 
+                                              className="form-control shadow-sm" 
+                                              placeholder="Buscar" 
+                                              onChange={handleData} 
+                                            />
                                           </div>
+                                          </div>
+                                          
                                           <table id="datatable" className="table table-striped table-bordered" style={{width:"100%"}}>
                                               <thead>
                                                   <tr>
@@ -561,13 +579,13 @@ const Arrendatarios = () => {
                                                       </td>
                                                   </tr> */}
                                                   {
-                                                    arrendatario.length == 0 ?
+                                                    data.length == 0 ?
                                                     (
                                                         <tr><td colSpan={6}  style={{textAlign:'center'}} ><span style={{fontWeight:'bold'}}>No Hay Datos...</span></td></tr>
                                                     )
                                                     :
                                                     (
-                                                     arrendatario.map((row, i)=>(
+                                                      data.map((row, i)=>(
                                                         <tr key={i}>
                                                             <td><label
                                                             style={{
