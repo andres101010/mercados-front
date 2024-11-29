@@ -3,14 +3,28 @@ import { login } from "../services/login";
 import { useNavigate } from 'react-router-dom';
 import Spinner from "../component/spinner/Spinner";
 import Swal from 'sweetalert2';
+import { UserContext } from "../context/UserProvider";
+import { useContext, useEffect } from "react";
 const Login = () => {
   const navigate = useNavigate();
-  const { setEmail, setPassword, email, password, loading, setLoading, setUser} = UseLogin();
+  const { setEmail, setPassword, email, password, loadingLogin, setLoadingLogin, setUser} = UseLogin();
+
+  const {user, loading } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/inicio');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]); // Observa que ahora dependemos de `user`
   
+  if (loading) {
+    return <div><Spinner /></div>; 
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
+    setLoadingLogin(true);
     try {
       const resp = await login({ email, password });
   
@@ -30,7 +44,7 @@ const Login = () => {
       setEmail("");
       setPassword("");
     } finally {
-      setLoading(false); 
+      setLoadingLogin(false); 
     }
   };
   
@@ -47,7 +61,7 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <h1>SDGM</h1>
             {
-              loading ? 
+              loadingLogin ? 
                 (<Spinner />)
                 :
                 (
