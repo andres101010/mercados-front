@@ -15,7 +15,9 @@ import { useEffect, useState } from "react";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const Dashboard = () => {
 
-const url = import.meta.env.VITE_URL_LOCAL;
+// const url = import.meta.env.VITE_URL_LOCAL;
+const url = import.meta.env.VITE_URL_SERVICE;
+
    const [info, setInfo] = useState([])
 
    const getInfo = async () => {
