@@ -2,16 +2,29 @@
 import avatar from '../assets/user.png'
 import { Link } from 'react-router-dom';
 import UseSideBar from '../hooks/UseSideBar';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import {UserContext}  from '../context/UserProvider';
+import './component.css'
 const Sidebar = (props) => {
   const { activeIndex, handleClick } = UseSideBar();
   const { user, mercados } = useContext(UserContext)
 
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="main_container">
-      <div className="col-md-3 left_col">
+
+      <button className="sidebar-toggle" onClick={toggleSidebar}>
+        <i className="fa fa-bars"></i>
+      </button>
+
+      {/* <div className="col-md-3 left_col"> */}
+      <div className={`col-md-3 left_col ${isSidebarOpen ? "open" : ""}`}>
         <div className="left_col scroll-view">
           <div className="navbar nav_title" style={{ border: 0 }}>
             <a href="index.html" className="site_title">
@@ -24,7 +37,7 @@ const Sidebar = (props) => {
           {/* Menu Profile Quick Info */}
           <div className="profile clearfix">
             <div className="profile_pic">
-              <img src={user.avatar ? user.avatar : avatar} alt="..." className="img-circle profile_img" />
+              <img src={user.avatarUrl ? user.avatarUrl : avatar} alt="..." className="img-circle profile_img" />
             </div>
             <div className="profile_info">
               <span>{user.level == 1 ? "Administrador" : user.level == 2 ? "Digitador" : ""}</span>
@@ -130,6 +143,11 @@ const Sidebar = (props) => {
       <div className="content">{props.children}</div>
     </div>
   );
+
+ 
 };
+
+
+
 
 export default Sidebar;

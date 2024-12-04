@@ -27,7 +27,6 @@ const Login = () => {
     setLoadingLogin(true);
     try {
       const resp = await login({ email, password });
-  
       setUser(resp.user);
       localStorage.setItem('user', JSON.stringify(resp.user));
       navigate('/inicio'); // Redirige solo si `login` fue exitoso

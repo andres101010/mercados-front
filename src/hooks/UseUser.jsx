@@ -25,8 +25,14 @@ const UseUser = () => {
 
     
     const handleEdit = (location, id) => {
+      const uploadLocation = {
+        ...location,
+        id: id,
+        carnet: Number(location.carnet),
+        phone: Number(location.phone)
+      }
+      setCurrentLocation(uploadLocation);
       
-      setCurrentLocation({ ...location, id }); // Guardar el `location` que se está editando
       setIsEditModalVisible(true);  // Mostrar el modal de edición
     };
 

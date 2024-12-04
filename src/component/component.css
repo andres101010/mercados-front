@@ -1,0 +1,64 @@
+/* Ocultar el sidebar en tamaños pequeños */
+@media (max-width: 768px) {
+   
+   .col-md-3.left_col  {
+    display: flex; /* Asegura que el contenido se muestre */
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #2A3F54;
+    z-index: 1000;
+    color: #ffffff;
+    overflow-y: auto; 
+    transition: transform 0.3s ease-in-out; 
+    transform: translateX(-100%); 
+    will-change: transform; 
+
+   
+  }
+
+  
+  .col-md-3.left_col.open {
+    transform: translateX(0) !important;
+  }
+  
+
+    
+  .scroll-view {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    color: #ffffff;
+  }
+    
+  
+    .sidebar-toggle {
+      display: block;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background-color: #2A3F54;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+  }
+  
+  /* Mostrar normalmente en tamaños grandes */
+  @media (min-width: 769px) {
+    .sidebar-toggle {
+      display: none;
+    }
+  
+    .left_col {
+      display: block;
+      transform: translateX(0);
+    }
+  }
+  

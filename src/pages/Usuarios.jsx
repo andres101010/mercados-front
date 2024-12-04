@@ -75,13 +75,28 @@ const onFinish = async (values) => {
   const onFinishEdit = async (values) => {
     
     try {
+      const formData = new FormData();
+
+      // Agregar los campos al FormData
+      Object.keys(values).forEach((key) => {
+          if (key === 'avatar' && values.avatar?.fileList?.length > 0) {
+              // Extraer el archivo crudo
+              formData.append('avatar', values.avatar.fileList[0].originFileObj);
+          } else {
+              // Agregar los demás campos
+              formData.append(key, values[key]);
+          }
+      });
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+    }
       Swal.fire({
         icon: 'success',
         title: 'success',
         text: "Usuario Editado Con Exito..",
         confirmButtonText: 'Aceptar'
     });
-      await editUser(values , currentLocation._id)
+      await editUser(formData , currentLocation._id)
       await getAllUsers()
       form.resetFields();
       handleOk(); // Llama a handleOk con los datos del formulario
@@ -163,7 +178,7 @@ const onFinish = async (values) => {
                     </Select>
                   </Form.Item>
 
-                  <Form.Item
+                  {/* <Form.Item
                     label="Foto"
                     name="avatar"
                     rules={[{ required: false, message: 'Por favor seleccione una foto!' }]}
@@ -176,7 +191,7 @@ const onFinish = async (values) => {
                         <Button icon={<UploadOutlined />}>Seleccionar Foto</Button>
                     </Upload>
                    
-                  </Form.Item>
+                  </Form.Item> */}
 
                   <Form.Item
                     label="Carnet"
@@ -259,6 +274,7 @@ const onFinish = async (values) => {
                     level: currentLocation.level,
                   }}
                   onFinish={onFinishEdit} // Define `onFinishEdit` para procesar los datos editados
+                  encType="multipart/form-data"
                 >
                       <Form.Item
                     label="Nombre del Usuario"
