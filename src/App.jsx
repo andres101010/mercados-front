@@ -16,6 +16,7 @@ import Index from './pages/Index';
 import UserProvider from './context/UserProvider';
 import Usuarios from './pages/Usuarios';
 import ProtectedRoute from './component/ProtectedRoute';
+import Perfil from './pages/Perfil';
 // import * as jwtDecode from 'jwt-decode';
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
             <Route path="/puestos/:place" element={<Puestos />} />
             <Route path="/arrendatarios/:place" element={<Arrendatarios />} />
             <Route path="/usuarios" element={<Usuarios />} />
+            <Route path="/perfil" element={<Perfil />} />
           </Route>
         </Routes>
       </BrowserRouter>

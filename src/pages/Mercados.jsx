@@ -351,7 +351,7 @@ const Mercados = () => {
                                             />
                                           </div>
                                         </div>
-
+                                        <div className="table-container">
                                           <table id="datatable" className="table table-striped table-bordered" style={{width:"100%" }}>
                                               <thead>
                                                   <tr>
@@ -370,9 +370,9 @@ const Mercados = () => {
                                               <tbody>
                                                       {data?.map((location, index) => (
                                                         <tr key={index}>
-                                                          <td>{location.nombre}</td>
-                                                          <td>{location.local ? location.local : 0}</td>
-                                                          <td style={{ position: 'relative' }}>
+                                                          <td data-label="Nombre:">{location.nombre}</td>
+                                                          <td data-label="Puestos: ">{location.local ? location.local : 0}</td>
+                                                          <td  style={{ position: 'relative' }}>
                                                           <span>{location.direccion}</span>
                                                             <a
                                                               href={location.mapLink}
@@ -400,6 +400,7 @@ const Mercados = () => {
                                                       ))}
                                                     </tbody>
                                           </table>
+                                          </div>
                                       </div>
                                   </div>
                               </div>

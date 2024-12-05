@@ -31,7 +31,7 @@ const Menu = () => {
           <li className="nav-item dropdown open" style={{ paddingLeft: '15px' }}>
             <button className="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded={isOpen ? 'true' : 'false'}
               onClick={toggleDropdown} style={{border:'none'}} >
-              <img src={avatar} alt="Profile" /> {user ? user.name : ""}
+              <img src={user.avatar ? user.avatarUrl : avatar} alt="Profile" /> {user ? user.name : ""}
             </button>
             {/* <div className="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
               <Link className="dropdown-item" to="/perfil">Perfil</Link>
@@ -44,9 +44,9 @@ const Menu = () => {
             </div> */}
             <div className={`dropdown-menu dropdown-usermenu pull-right ${isOpen ? 'show' : ''}`} aria-labelledby="navbarDropdown">
                 <Link className="dropdown-item" to="/perfil">Perfil</Link>
-                <Link className="dropdown-item" to="/herramientas">
+                {/* <Link className="dropdown-item" to="/herramientas">
                     <span>Herramientas</span>
-                </Link>
+                </Link> */}
                 <Link className="dropdown-item" to="/">
                     <i className="fa fa-sign-out pull-right"></i> Salir
                 </Link>
