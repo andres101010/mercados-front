@@ -381,7 +381,7 @@ const Puestos = () => {
                         
                           data?.map((dato, index) => (
                             <tr key={index}>
-                              <td>
+                              <td  data-label="Nombre:">
                                 <label style={{
                                    opacity: dato.name ? 1 : 0,
                                    textAlign:'center',
@@ -391,20 +391,20 @@ const Puestos = () => {
                                    color: 'white' 
                                    }}>{dato.name}</label>
                               </td>
-                              <td><label style={{
+                              <td  data-label="Carnet:"><label style={{
                                 textAlign:'center',
                                 width: '100%',
                                 backgroundColor: 'darkcyan',
                                 borderRadius: '5px',
                                 color: 'white'
                               }}>{dato.carnet}</label></td>
-                              <td> <label  style={{textAlign:'center',
+                              <td  data-label="Puesto:"> <label  style={{textAlign:'center',
                                 width: '100%',
                                 backgroundColor: 'darkcyan',
                                 color: 'white',
                                 borderRadius: '5px',
                               }}> {dato.number}</label></td>
-                              <td>
+                              <td  data-label="Asignado:">
                                 <label  style={{
                                             color: dato.status === 'libre' ? 'white' : 'white',  // Siempre blanco para el texto
                                             backgroundColor: dato.status === 'libre' ? 'red' : 'darkcyan',  // Fondo rojo para "libre" y darkcyan para otros casos
@@ -414,7 +414,7 @@ const Puestos = () => {
                                           }}
                                 >{dato.status}</label>
                               </td>
-                              <td><label 
+                              <td  data-label="Fecha De Cont:"><label 
                                 style={{
                                   color: dato.status === 'libre' ? 'white' : 'white',  // Siempre blanco para el texto
                                   backgroundColor: dato.status === 'libre' ? 'red' : 'darkcyan',  // Fondo rojo para "libre" y darkcyan para otros casos

@@ -587,7 +587,7 @@ const Arrendatarios = () => {
                                                     (
                                                       data.map((row, i)=>(
                                                         <tr key={i}>
-                                                            <td><label
+                                                            <td  data-label="Nombre:"><label
                                                             style={{
                                                               textAlign:'center',
                                                               width: '100%',
@@ -596,7 +596,7 @@ const Arrendatarios = () => {
                                                               color: 'white' 
                                                             }}  
                                                             >{row.name}</label></td>
-                                                            <td><label
+                                                            <td  data-label="Carnet:"><label
                                                             style={{
                                                               textAlign:'center',
                                                               width: '100%',
@@ -605,7 +605,7 @@ const Arrendatarios = () => {
                                                               color: 'white' 
                                                             }}
                                                             >{row.cedula}</label></td>
-                                                            <td><label
+                                                            <td  data-label="Mercado:"><label
                                                              style={{
                                                               textAlign:'center',
                                                               width: '100%',
@@ -614,7 +614,7 @@ const Arrendatarios = () => {
                                                               color: 'white' 
                                                             }}
                                                             >{row.mercado.nombre}</label></td>
-                                                            <td><label
+                                                            <td  data-label="Cant De Puestos:"><label
                                                              style={{
                                                               textAlign:'center',
                                                               width: '100%',

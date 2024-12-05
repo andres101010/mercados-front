@@ -457,11 +457,11 @@ const onFinish = async (values) => {
                                                         (
                                                             allUsers.map((row,i)=>(
                                                                 <tr key={i}>
-                                                                    <td>{row.name}</td>
-                                                                    <td>{row.carnet}</td>
-                                                                    <td>{row.phone}</td>
+                                                                    <td  data-label="Nombre:">{row.name}</td>
+                                                                    <td  data-label="Carnet:">{row.carnet}</td>
+                                                                    <td  data-label="Telefono:">{row.phone}</td>
                                                                     <td>{row.cargo}</td>
-                                                                    <td ><label style={{color:"white", backgroundColor:"darkcyan", width:'100%', textAlign:'center'}}>{row.level == 1 ? "Admin" : row.level == 2 ? "Sub Admin" : ""}</label></td>
+                                                                    <td  data-label="Niv. De Usuario:"><label style={{color:"white", backgroundColor:"darkcyan", width:'100%', textAlign:'center'}}>{row.level == 1 ? "Admin" : row.level == 2 ? "Sub Admin" : ""}</label></td>
                                                                     <td><button type="button" className="btn btn-warning fa fa-pencil" onClick={()=>handleEdit(row, row._id)}></button></td>
                                                                     <td>
                                                                         <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
