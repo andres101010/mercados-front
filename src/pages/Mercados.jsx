@@ -5,6 +5,7 @@ import { createMercado, editMercado, deleteMercado } from '../services/mercados'
 import Swal from 'sweetalert2';
 import { UserContext } from '../context/UserProvider';
 import { useContext } from 'react';
+import { Link } from 'react-router-dom';
 const Mercados = () => {
   const {mercados, handleMercados} = useContext(UserContext)
   const [form] = Form.useForm();
@@ -181,6 +182,7 @@ const Mercados = () => {
     setValueInput(e.target.value)
   }
 
+  console.log("data", data);
   return (
     <div className="nav-md">
     <div className="container body">
@@ -394,7 +396,7 @@ const Mercados = () => {
                                                             <button type="button" className="btn btn-danger fa fa-close" onClick={()=> handleDelete(location)}></button>
                                                           </td>
                                                           <td>
-                                                            <button type="button" className="btn btn-info fa fa-file-pdf-o"  ></button>
+                                                            <Link to={`/${location._id}/pdf`}><button type="button" className="btn btn-info fa fa-file-pdf-o"></button></Link>
                                                           </td>
                                                         </tr>
                                                       ))}

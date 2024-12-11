@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const Dashboard = () => {
 
-// const url = import.meta.env.VITE_URL_LOCAL;
-const url = import.meta.env.VITE_URL_SERVICE;
+const url = import.meta.env.VITE_URL_LOCAL;
+// const url = import.meta.env.VITE_URL_SERVICE;
 
    const [info, setInfo] = useState([])
 
@@ -34,7 +34,7 @@ const url = import.meta.env.VITE_URL_SERVICE;
    // eslint-disable-next-line react-hooks/exhaustive-deps
    },[])
 
-   console.log("info", info);
+  
    // Datos para el gráfico
    const data = {
     labels: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"],
@@ -66,7 +66,7 @@ const url = import.meta.env.VITE_URL_SERVICE;
 
   // Información para los cuadros estadísticos
   const stats = [
-    { label: "Pagos Total Esta Semana", value:info?.result?.montoPagado ? `$ ${info?.result?.montoPagado}` : "", color: "green" },
+    { label: "Pagos Total Esta Semana", value:info?.result?.montoPagado ? `$ ${info?.result?.montoPagado}` : "$ 0", color: "green" },
     { label: "Dias No Pagados Esta Semana", value: info?.result?.fechasNoPagadas ? `${info?.result?.fechasNoPagadas?.length} días` : "", color: "red" },
     { label: "Total de Mercados", value: info?.mercados, color: "blue" },
     { label: "Total de Arrendatarios", value: info.arrendatarios, color: "purple" },

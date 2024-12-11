@@ -17,6 +17,7 @@ import UserProvider from './context/UserProvider';
 import Usuarios from './pages/Usuarios';
 import ProtectedRoute from './component/ProtectedRoute';
 import Perfil from './pages/Perfil';
+import PdfRenderer from './component/PdfRenderer';
 // import * as jwtDecode from 'jwt-decode';
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
             <Route path="/arrendatarios/:place" element={<Arrendatarios />} />
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/perfil" element={<Perfil />} />
+            <Route path="/:place/pdf" element={<PdfRenderer />} />
           </Route>
         </Routes>
       </BrowserRouter>
