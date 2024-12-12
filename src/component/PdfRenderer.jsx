@@ -22,29 +22,49 @@ const MyDocument = ({dataPdf, dataPdfPago}) => {
             textAlign: "center",
         },
         header: {
-            fontSize: 25,
+            fontSize: 28,
             marginBottom: 10,
             color: "darkcyan",
+            fontWeight:"bold",
         },
         text: {
-            fontSize: 12,
-             color:"#2A3F54"
+            fontSize: 15,
+             color:"darkcyan"
         },
         p: {
             fontSize: 12,
             color: "darkgray",
         },
         textHeader: {
-            fontSize: 15,
+            fontSize: 22,
             color: "darkcyan",
             textAlign: "center"
         },
         headerArrendatario: {
-            fontSize: 12,
+            fontSize: 22,
             margin: 15,
-            color:"#2A3F54"
+            color:"darkcyan"
+        },
+        sectionPago: {
+            margin: 10,
+            padding: 10,
+            border: "1px solid #ccc",
+            textAlign: "center",
+            height: "70%",
+        },
+        textPago: {
+            fontSize: 15,
+            color:"#212529",
+            marginBottom: "15px",
+
+        },
+        headerTextPago:{
+            fontSize: 22,
+            color:"darkcyan",
+            marginBottom: "10px",
         }
     });
+    
     let nameMercado;
     dataPdf.length > 0 ? dataPdf?.map((row)=> nameMercado = row.mercado.nombre) : dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre)
     
@@ -126,39 +146,70 @@ const MyDocument = ({dataPdf, dataPdfPago}) => {
                 ))
                 :
                 dataPdfPago.map((row, i)=>(
-                    <View style={styles.section} key={i}>
+                    <View style={styles.sectionPago} key={i}>
                         
                         
-                        <Text style={styles.text}>
-                            {`Nombre: ${row.pago.arrendatario.name} ${row.pago.arrendatario.lastName}`}
+                        <Text style={styles.headerTextPago}>
+                            {'Arrendatario:' } 
                         </Text>
-                        <Text style={styles.text}>
-                            {`Cédula: ${row.pago.arrendatario.cedula}`}
+                        <Text style={styles.textPago}>
+                            {`${row.pago.arrendatario.name} ${row.pago.arrendatario.lastName}`}
                         </Text>
-                        <Text style={styles.text}>
-                            {`Teléfono: ${row.pago.arrendatario.phone}`}
+                        <Text style={styles.headerTextPago}>
+                            {`Cédula: `}
                         </Text>
-                        <Text style={styles.text}>
-                            {`Direccion: ${row.pago.arrendatario.address}`}
+                        <Text style={styles.textPago}>
+                            {`${row.pago.arrendatario.cedula}`}
                         </Text>
-                        <Text style={styles.text}>
-                            {`Fecha De Pago: ${row.pago.fechaPago.split('T')[0]}`}
+                        <Text style={styles.headerTextPago}>
+                            {`Teléfono: `}
                         </Text>
-                        <Text style={styles.text}>
-                            {`Local Numero: ${row.pago.local.number}`}
+                        <Text style={styles.textPago}>
+                            {` ${row.pago.arrendatario.phone}`}
                         </Text>
-                        <Text style={styles.text}>
-                            {`Estado : ${row.pago.local.status}`}
+                        <Text style={styles.headerTextPago}>
+                            {`Direccion:`}
                         </Text>
-                        <Text style={styles.text}>
-                            {`Monto : ${row.pago.monto}`}
+                        <Text style={styles.textPago}>
+                            {` ${row.pago.arrendatario.address}`}
                         </Text>
-                        <Text style={styles.text}>
-                            {`Monto Por Dia : ${row.pago.montoPorDia}`}
+                        <Text style={styles.headerTextPago}>
+                            {`Fecha De Pago:`}
                         </Text>
-                        <Text style={styles.text}>
+                        <Text style={styles.textPago}>
+                            {`${row.pago.fechaPago.split('T')[0]}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Local Numero:`}
+                        </Text>
+                        <Text style={styles.textPago}>
+                            {`${row.pago.local.number}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Estado:`}
+                        </Text>
+                        <Text style={styles.textPago}>
+                            {`${row.pago.local.status}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Monto:`}
+                        </Text>
+                        <Text style={styles.textPago}>
+                            {`${row.pago.monto}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Monto Por Dia:`}
+                        </Text>
+                        <Text style={styles.textPago}>
+                            {`${row.pago.montoPorDia}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
                             {/* {`Dias Pagados : ${row.pago.diasPagados.map((row)=> row)}`} */}
-                            {`Días Pagados: ${row.pago.diasPagados.join(', ')}`}
+                            {`Días Pagados:`}
+                        </Text>
+                        <Text style={styles.textPago}>
+                            {/* {`Dias Pagados : ${row.pago.diasPagados.map((row)=> row)}`} */}
+                            {`${row.pago.diasPagados.join(', ')}`}
                         </Text>
                     </View>
                 ))
