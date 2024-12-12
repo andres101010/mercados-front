@@ -182,7 +182,6 @@ const Mercados = () => {
     setValueInput(e.target.value)
   }
 
-  console.log("data", data);
   return (
     <div className="nav-md">
     <div className="container body">
@@ -356,7 +355,7 @@ const Mercados = () => {
                                         <div className="table-container">
                                           <table id="datatable" className="table table-striped table-bordered" style={{width:"100%" }}>
                                               <thead>
-                                                  <tr>
+                                                  <tr >
                                                       <th>Nombre</th>
                                                       <th>Puestos</th>
                                                       <th>Ubicacion</th>

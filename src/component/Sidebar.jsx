@@ -2,19 +2,27 @@
 import avatar from '../assets/user.png'
 import { Link } from 'react-router-dom';
 import UseSideBar from '../hooks/UseSideBar';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import {UserContext}  from '../context/UserProvider';
 import './component.css'
 const Sidebar = (props) => {
-  const { activeIndex, handleClick } = UseSideBar();
+  const { activeIndex,
+          handleClick,
+          isSidebarOpen,
+          // setIsSidebarOpen,
+          toggleSidebar       
+        } = UseSideBar();
+
   const { user, mercados } = useContext(UserContext)
 
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  // const toggleSidebar = () => {
+  //   setIsSidebarOpen(!isSidebarOpen);
+  // };
+
+ 
 
   return (
     <div className="main_container">
@@ -59,7 +67,7 @@ const Sidebar = (props) => {
                 <li className={activeIndex === 1 ? "active" : ""} onClick={() => handleClick(1)}>
                   <Link to="/mercados"><i className="fa fa-shopping-cart"></i> Mercados</Link>
                 </li>
-                <li className={activeIndex === 2 ? "active" : ""} onClick={() => handleClick(2)}>
+                <li className={activeIndex === 2 ? "active" : ""}    >
                   <Link>
                     <i className="fa fa-cubes"></i> Puestos <span className="fa fa-chevron-down"></span>
                   </Link>
@@ -75,7 +83,7 @@ const Sidebar = (props) => {
                         mercados?.data.map((place, index) => {
                           const formattedPlace = place.nombre.replace(/\s+/g, '-'); // Reemplaza espacios con guiones
                           return (
-                            <li key={index}>
+                            <li key={index} onClick={() => handleClick(2)}>
                               <Link to={`/puestos/${formattedPlace}`}>{place.nombre}</Link>
                             </li>
                           );
@@ -84,7 +92,7 @@ const Sidebar = (props) => {
                     }
                   </ul>
                 </li>
-                <li className={activeIndex === 3 ? "active" : ""} onClick={() => handleClick(3)}>
+                <li className={activeIndex === 3 ? "active" : ""}   >
                   <Link >
                     <i className="fa fa-users"></i> Arrendatarios <span className="fa fa-chevron-down"></span>
                   </Link>
@@ -101,7 +109,7 @@ const Sidebar = (props) => {
                         mercados?.data.map((place, index) => {
                           const formattedPlace = place.nombre.replace(/\s+/g, '-'); // Reemplaza espacios con guiones
                           return (
-                            <li key={index}>
+                            <li key={index} onClick={() => handleClick(3)}>
                               <Link to={`/arrendatarios/${formattedPlace}`}>{place.nombre}</Link>
                             </li>
                           );

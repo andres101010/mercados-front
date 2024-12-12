@@ -48,6 +48,12 @@
       padding: 10px 15px;
       cursor: pointer;
     }
+
+    .title_left{
+      margin-left: 40px;
+    }
+
+    
   }
   
   /* Mostrar normalmente en tamaños grandes */
