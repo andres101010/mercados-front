@@ -4,7 +4,7 @@ import { PDFDownloadLink, PDFViewer, Page, Text, View, Document, StyleSheet, pdf
 import { useParams } from "react-router-dom";
 import { getInfoPdf } from "../services/pdf";
 
-const MyDocument = ({dataPdf}) => {
+const MyDocument = ({dataPdf, dataPdfPago}) => {
     const styles = StyleSheet.create({
         page: {
             flexDirection: "column",
@@ -46,7 +46,8 @@ const MyDocument = ({dataPdf}) => {
         }
     });
     let nameMercado;
-    dataPdf.map((row)=> nameMercado = row.mercado.nombre)
+    dataPdf.length > 0 ? dataPdf?.map((row)=> nameMercado = row.mercado.nombre) : dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre)
+    
     return (
         // <Document>
         //     <Page size="A4" style={styles.page}>
@@ -74,18 +75,30 @@ const MyDocument = ({dataPdf}) => {
         <Document>
         <Page size="A4" style={styles.page}>
                     <View style={styles.sectionHeader}>
-                        <Text style={styles.header}>Reporte De Mercados</Text>
+                        {
+                            dataPdf.length > 0 ? <Text style={styles.header}>Reporte De Mercados</Text> :
+                            <Text style={styles.header}>Reporte De Pagos</Text>
+
+                        }
+                        
                         <Text style={styles.p}>El Gobierno Autonomo Municipal de Tarija - Cercado tiene la jurisdiccion de designar en calidad de arriendo, los puestos de Cada mercado de la provincia cercado en la ciudada de Tarija, manteniendo el orden y el uso adecuado de los puestos dedicados al comercio.</Text>
                     </View>
                     
                     <Text style={styles.textHeader}>
                             {`Mercado: ${nameMercado}`}
                     </Text>
-                    <Text style={styles.headerArrendatario}>
-                            {'Arrendatarios: '}
-                    </Text>
+                    {
+                         dataPdf.length > 0 ? 
+                            <Text style={styles.headerArrendatario}>
+                                    {'Arrendatarios: '}
+                            </Text>
+                            :
+                            <Text style={styles.headerArrendatario}>
+                                    {'Pago: '}
+                            </Text>
+                    }
             {
-                 dataPdf.map((row, i) => (
+                 dataPdf.length > 0 ?  dataPdf.map((row, i) => (
                     <View style={styles.section} key={i}>
                         
                         
@@ -108,6 +121,46 @@ const MyDocument = ({dataPdf}) => {
                             {`Puesto Numero: ${row.local.map((row)=>row.number)}`}
                         </Text>
                     </View>
+                    
+
+                ))
+                :
+                dataPdfPago.map((row, i)=>(
+                    <View style={styles.section} key={i}>
+                        
+                        
+                        <Text style={styles.text}>
+                            {`Nombre: ${row.pago.arrendatario.name} ${row.pago.arrendatario.lastName}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Cédula: ${row.pago.arrendatario.cedula}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Teléfono: ${row.pago.arrendatario.phone}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Direccion: ${row.pago.arrendatario.address}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Fecha De Pago: ${row.pago.fechaPago.split('T')[0]}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Local Numero: ${row.pago.local.number}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Estado : ${row.pago.local.status}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Monto : ${row.pago.monto}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Monto Por Dia : ${row.pago.montoPorDia}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {/* {`Dias Pagados : ${row.pago.diasPagados.map((row)=> row)}`} */}
+                            {`Días Pagados: ${row.pago.diasPagados.join(', ')}`}
+                        </Text>
+                    </View>
                 ))
             }
         </Page>
@@ -121,13 +174,17 @@ const PdfRenderer = () => {
     // const printContainerRef = useRef(null);
 
     const [dataPdf, setDataPdf] = React.useState([])
+    const [dataPdfPago, setDataPdfPago] = React.useState([])
     const { place } = useParams();
 
     const infoPdf = async () => {
         try {
             const response = await getInfoPdf(place);
-            if (JSON.stringify(dataPdf) !== JSON.stringify(response.data)) {
+            const noIncludesPago = response.data.every(row => !row.pago); 
+            if (JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago) {
                 setDataPdf(response.data);
+            }else{
+                setDataPdfPago(response.data)
             }
         } catch (error) {
             console.log("error", error);
@@ -155,8 +212,9 @@ const PdfRenderer = () => {
 
     //     document.body.appendChild(iframe);
     // };
+ 
     const handlePrint = React.useCallback(async () => {
-        const blob = await pdf(<MyDocument dataPdf={dataPdf} />).toBlob();
+        const blob = await pdf(<MyDocument dataPdf={dataPdf} dataPdfPago={dataPdfPago}/>).toBlob();
         const url = URL.createObjectURL(blob);
     
         const iframe = document.createElement("iframe");
@@ -170,7 +228,7 @@ const PdfRenderer = () => {
         };
     
         document.body.appendChild(iframe);
-    }, [dataPdf]);
+    }, [dataPdf, dataPdfPago]);
 
     return (
         <div style={{ padding: "20px" }}>
@@ -184,13 +242,13 @@ const PdfRenderer = () => {
                     <h3>Vista Previa del PDF</h3>
                     {/* Vista previa del PDF */}
                     <PDFViewer style={{ width: "100%", height: "500px" }}>
-                        <MyDocument dataPdf={dataPdf}/>
+                        <MyDocument dataPdf={dataPdf} dataPdfPago={dataPdfPago} />
                     </PDFViewer>
                 </div>
             )}
 
             {/* Botón para descargar */}
-            <PDFDownloadLink document={<MyDocument dataPdf={dataPdf}/>} fileName="ejemplo-documento.pdf">
+            <PDFDownloadLink document={<MyDocument dataPdf={dataPdf}  dataPdfPago={dataPdfPago} />} fileName="ejemplo-documento.pdf">
                 {({loading }) =>
                     loading ? "Cargando documento..." : <button style={{marginBottom: "10px" , color:'white', backgroundColor:'#17a2b8', textTransform: 'none !important', fontSize:'14px', padding: '.375rem .75rem', borderRadius:'3px', borderColor:'#17a2b8', border:'solid 1px transparent'}}>Descargar PDF</button>
                 }

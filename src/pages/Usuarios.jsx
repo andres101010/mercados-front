@@ -428,7 +428,7 @@ const onFinish = async (values) => {
                                                         <th>Cargo</th>
                                                         <th>Permiso</th>
                                                         <th>Editar</th>
-                                                        <th>Movimientos</th>
+                                                        {/* <th>Movimientos</th> */}
         
                                                     </tr>
                                                 </thead>
@@ -463,10 +463,10 @@ const onFinish = async (values) => {
                                                                     <td>{row.cargo}</td>
                                                                     <td  data-label="Niv. De Usuario:"><label style={{color:"white", backgroundColor:"darkcyan", width:'100%', textAlign:'center'}}>{row.level == 1 ? "Admin" : row.level == 2 ? "Sub Admin" : ""}</label></td>
                                                                     <td><button type="button" className="btn btn-warning fa fa-pencil" onClick={()=>handleEdit(row, row._id)}></button></td>
-                                                                    <td>
+                                                                    {/* <td>
                                                                         <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
                     
-                                                                    </td>
+                                                                    </td> */}
                                                                 </tr>
                                                             ))
                                                         )

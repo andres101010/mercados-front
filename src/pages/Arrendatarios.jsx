@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { getAllArrendatarios, createArrendatario } from '../services/arrendatario';
 import UseArrendatarios from '../hooks/UseArrendatarios';
 import { useEffect, useCallback } from 'react';
@@ -39,7 +39,6 @@ const Arrendatarios = () => {
     } = UseArrendatarios();
     const { place } = useParams();
 
-   
   const handleCheckboxChange = (e) => {
     setIsMultipleDates(e.target.checked);
     // Opcional: Resetear el campo de fecha al cambiar la opción
@@ -180,7 +179,6 @@ const Arrendatarios = () => {
   const handleData = (e) => {
     setValueInput(e.target.value)
   }
-
   return (
     <div>
           <Modal
@@ -440,7 +438,7 @@ const Arrendatarios = () => {
                       margin:'3px' 
 
                     }}
-                    >Día Pagado: {dia}</label></div>
+                    >Día Pagado: {dia} <i className="fa fa-check"></i></label></div>
                   ))
                 )
               ) : (
@@ -471,7 +469,7 @@ const Arrendatarios = () => {
                       color: 'white',
                       margin:'3px' 
                     }}
-                    >Día No Pagado: {dia}</label></div>
+                    >Día No Pagado: {dia} <i className="fa fa-exclamation-triangle"></i></label></div>
                   ))
                 )
               )}
@@ -559,7 +557,7 @@ const Arrendatarios = () => {
                                                       <th>Mercado</th>
                                                       <th>Puesto</th>
                                                       <th>Pagar</th>
-                                                      <th>Imprimir Reporte</th>
+                                                      <th>Imprimir Ultimo Reporte De Pago</th>
       
                                                   </tr>
                                               </thead>
@@ -627,7 +625,7 @@ const Arrendatarios = () => {
                                                             <td><button type="button" className="btn btn-warning fa fa-money" data-toggle="modal" data-target="#PagarCanchaje" onClick={()=>handleShowModalPago(row,row.id)} disabled={row.local == 0} style={{backgroundColor:row.local == 0 ? 'gray' : null}}></button>
                                                       </td>
                                                       <td>
-                                                          <button type="button" className="btn btn-info fa fa-file-pdf-o" disabled={row.local == 0} style={{backgroundColor:row.local == 0 ? 'gray' : null}}></button>
+                                                          <Link to={`/${row._id}pago/pdf`}> <button type="button" className="btn btn-info fa fa-file-pdf-o" disabled={row.local == 0} style={{backgroundColor:row.local == 0 ? 'gray' : null}}></button></Link>
       
                                                       </td>
                                                         </tr>
