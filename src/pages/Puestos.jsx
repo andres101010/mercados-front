@@ -1,7 +1,7 @@
 
 import { Modal, Form, Input, Button, DatePicker, Select  } from 'antd';
 import UsePuestos from '../hooks/UsePuestos.jsx';
-import { createLocal, editLocal, getLocal } from '../services/local.js';
+import { createLocal, editLocal, getLocal, createObservacion } from '../services/local.js';
 import Swal from 'sweetalert2';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -27,7 +27,14 @@ const Puestos = () => {
     setArrendatarios ,
     form,
     valueInput,
-    setValueInput
+    setValueInput,
+
+    open,
+    // setOpen,
+    showOpen,
+    observacion,
+    // setObservacion
+
   } = UsePuestos();
 
   // const datos = [
@@ -84,6 +91,7 @@ const Puestos = () => {
   // console.log("puestossssssss", puestos);
   // console.log("arre", arrendatarios);
   // console.log("currentLocation", currentLocation);
+  // console.log("observaciones", observacion);
  
   const handleCreateLocal = async () => {
     try {
@@ -106,6 +114,34 @@ const Puestos = () => {
     });
     }
   }
+
+  const initialValues = { observacion: '', fecha: '',};
+
+
+  const onFinish = async (values) => {
+      console.log('Datos del formulario:', values);
+      try {
+        await createObservacion(observacion, values)
+        Swal.fire({
+          icon: 'Success',
+          title: 'success',
+          text: "Oservacion Creada Con Exito..",
+          confirmButtonText: 'Aceptar'
+      });
+        form.resetFields();
+        handleOk(); // Llama a handleOk con los datos del formulario
+      } catch (error) {
+        console.log("Error: ", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.response.data.message,
+          confirmButtonText: 'Aceptar'
+      });
+      handleOk(); // Llama a handleOk con los datos del formulario
+      }
+    };
+
   const onFinishEdit = async () => {
     try {
       const body ={
@@ -258,6 +294,53 @@ const Puestos = () => {
 
             </Modal>
 
+            <Modal
+              title="Agregar Observacion"
+              open={open}
+              onCancel={handleCancel}
+              footer={null}
+            >
+             
+              
+                  <Form
+                    form={form}
+                  
+                    layout="vertical"
+                    name="edit-form"
+                    initialValues={initialValues}
+                    onFinish={onFinish} // Maneja el envío del formulario
+                  >
+
+                    <Form.Item
+                      label="Fecha De La Observacion"
+                      name="fecha"
+                      rules={[{ required: true, message: 'Por favor ingrese La Fecha !' }]}
+                    >
+                      <DatePicker format="YYYY-MM-DD" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Observacion"
+                      name="observacion"
+                      rules={[{ required: true, message: 'Por favor ingrese Contenido!' }]}
+                    >
+                      <Input />
+                    </Form.Item>
+
+             
+
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+                      <Button onClick={handleCancel} style={{ marginRight: '10px' }}>
+                        Cerrar
+                      </Button>
+                      <Button type="primary" htmlType="submit">
+                        Guardar Cambios
+                      </Button>
+                    </div>
+                  </Form>
+      
+            </Modal>
+
 
           <div className="">
             <div className="page-title">
@@ -312,8 +395,10 @@ const Puestos = () => {
                           <th>Puesto</th>
                           <th>Estado</th>
                           <th>Fecha de Contrato</th>
+                          <th>Rubro</th>
                           <th>Contrato</th>
                           <th>Desiganar</th>
+                          <th>Agregar Observaciones</th>
                         </tr>
                       </thead>
 
@@ -423,12 +508,25 @@ const Puestos = () => {
                                   borderRadius: '5px',
                                 }}
                               >{dato.fechaDeContrato}</label></td>
+                              <td  data-label="Fecha De Cont:"><label 
+                                style={{
+                                  color: dato.status === 'libre' ? 'white' : 'white',  // Siempre blanco para el texto
+                                  backgroundColor: dato.status === 'libre' ? 'red' : 'darkcyan',  // Fondo rojo para "libre" y darkcyan para otros casos
+                                  width: '100%',
+                                  textAlign: 'center',
+                                  borderRadius: '5px',
+                                }}
+                              >{dato?.arrendatario?.rubro}</label></td>
                               <td>
                                 <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
                               </td>
                               <td>
                                 <button type="button" className="btn btn-info fa fa-plus" onClick={() => handleCreateLocal() }></button>
                                 <button type="button" className="btn btn-primary fa fa-pencil" onClick={() => handleEdit(dato, dato._id)}></button>
+                              </td>
+
+                              <td>
+                                <button type="button" className="btn btn-danger fa fa-file-pdf-o" onClick={()=>{showOpen(dato._id)}}></button>
                               </td>
                             </tr>
                           ))}

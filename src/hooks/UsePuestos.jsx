@@ -11,6 +11,9 @@ const UsePuestos = () => {
 
     const [valueInput, setValueInput] = useState(null);
 
+    const [open, setOpen] = useState(false)
+    const [observacion, setObservacion] = useState(null)
+
 
     const showModal = () => {
         console.log("click modal");
@@ -19,24 +22,28 @@ const UsePuestos = () => {
 
     const handleOk = () => {
         setIsModalVisible(false);
-        setIsEditModalVisible(false)
+        setIsEditModalVisible(false);
+        setOpen(false);
     };
 
   const [form] = Form.useForm();
 
+   const showOpen = (id) => {
+    setObservacion(id, true);
+    setOpen(true);
+   }
 
     const handleCancel = () => {
         form.resetFields();
         setCurrentLocation(null);
         setIsModalVisible(false);
         setIsEditModalVisible(false)
-
+        setOpen(false);
     };
 
     
     const handleEdit = (location, id) => {
-      console.log("location: " , location);
-      console.log("id: " , id);
+      
       setCurrentLocation({...location, id}); 
       setIsEditModalVisible(true);  // Mostrar el modal de edición
     };
@@ -63,7 +70,13 @@ const UsePuestos = () => {
 
     
     valueInput,
-    setValueInput
+    setValueInput,
+
+    open,
+    setOpen,
+    showOpen,
+    observacion,
+    setObservacion
    }
     
   
