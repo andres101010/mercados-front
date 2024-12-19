@@ -35,6 +35,10 @@ const Puestos = () => {
     observacion,
     // setObservacion
 
+    showModalObservacion,
+    openModalObservacion,
+    idpuesto
+
   } = UsePuestos();
 
   // const datos = [
@@ -208,6 +212,7 @@ const Puestos = () => {
   const handleData = (e) => {
     setValueInput(e.target.value)
   }
+  const dataObservacion = showModalObservacion ? puestos.find((row)=>row._id == idpuesto) : [];
   return (
     <div>
       <div className="right_col" role="main">
@@ -341,6 +346,25 @@ const Puestos = () => {
       
             </Modal>
 
+            <Modal
+            title="Observaciones"
+             open={showModalObservacion}
+             onCancel={handleCancel}
+
+            >
+              {
+                showModalObservacion && dataObservacion.length != 0 ?
+                  dataObservacion.observaciones.map((row,i)=>(
+                    <div key={i} style={{border:'solid 2px gray', textAlign:'center', margin:'2px', backgroundColor:'red', color:'white'}}>
+                      <h3>{row.fecha}</h3>
+                      <h3>{row.observacion}</h3>
+                      <p style={{border:'solid 1px white', borderRadius:'50%', width:'35px', height:'30px',margin:'auto', backgroundColor:'white', marginBottom:'4px'}}><i className="fa fa-times text-danger"></i></p>
+
+                    </div>
+                  ))
+                 : null
+              }
+            </Modal>
 
           <div className="">
             <div className="page-title">
@@ -399,6 +423,7 @@ const Puestos = () => {
                           <th>Contrato</th>
                           <th>Desiganar</th>
                           <th>Agregar Observaciones</th>
+                          <th>Ver Observaciones</th>
                         </tr>
                       </thead>
 
@@ -517,16 +542,19 @@ const Puestos = () => {
                                   borderRadius: '5px',
                                 }}
                               >{dato?.arrendatario?.rubro}</label></td>
-                              <td>
+                              <td  data-label="Contrato">
                                 <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
                               </td>
-                              <td>
+                              <td  data-label="Asig">
                                 <button type="button" className="btn btn-info fa fa-plus" onClick={() => handleCreateLocal() }></button>
                                 <button type="button" className="btn btn-primary fa fa-pencil" onClick={() => handleEdit(dato, dato._id)}></button>
                               </td>
 
-                              <td>
+                              <td  data-label="Agre. Observac">
                                 <button type="button" className="btn btn-danger fa fa-file-pdf-o" onClick={()=>{showOpen(dato._id)}}></button>
+                              </td>
+                              <td  data-label="Ver">
+                                <button type="button" className="btn btn-primary fa fa-arrow-right" onClick={()=>{openModalObservacion(dato._id)}} disabled={dato?.observaciones.length == 0}> {dato?.observaciones.length == 0 ? "Sin Observaciones" : `Total: ${dato?.observaciones?.length}`}</button>
                               </td>
                             </tr>
                           ))}

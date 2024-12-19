@@ -94,7 +94,7 @@ const Arrendatarios = () => {
     },[place])
  
 
-  const initialValues = { name: '', lastName: '', cedula: '', phone:'', address:''};
+  const initialValues = { name: '', lastName: '', cedula: '', phone:'', address:'', rubro: '',};
 
   const onFinish = async (values) => {
    
@@ -103,7 +103,7 @@ const Arrendatarios = () => {
       Swal.fire({
         icon: 'Success',
         title: 'success',
-        text: "Mecado Creado Con Exito..",
+        text: "Arrendatario Creado Con Exito..",
         confirmButtonText: 'Aceptar'
     });
       await getArrendatarios(place)
@@ -233,6 +233,14 @@ const Arrendatarios = () => {
                     label="Direccion"
                     name="address" // Cambiado a minúsculas
                     rules={[{ required: true, message: 'Por favor ingrese La Direccion!' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Rubro del Arrendatario"
+                    name="rubro"
+                    rules={[{ required: true, message: 'Por favor ingrese el rubro del Arrendatario!' }]}
                   >
                     <Input />
                   </Form.Item>
@@ -556,6 +564,7 @@ const Arrendatarios = () => {
                                                       <th>Carnet</th>
                                                       <th>Mercado</th>
                                                       <th>Puesto</th>
+                                                      <th>Rubro</th>
                                                       <th>Pagar</th>
                                                       <th>Imprimir Ultimo Reporte De Pago</th>
       
@@ -621,6 +630,17 @@ const Arrendatarios = () => {
                                                               color: 'white' 
                                                             }}
                                                             >{row.local.length == 0 ? 'Sin Asignar' : row.local.map((file)=>file.number).join(', ')}</label></td>
+
+                                                            <td  data-label="Rubro:"><label
+                                                             style={{
+                                                              textAlign:'center',
+                                                              width: '100%',
+                                                              backgroundColor: 'darkcyan',
+                                                              borderRadius: '5px',
+                                                              color: 'white' 
+                                                            }}
+                                                            >{row.rubro}</label></td>
+
 
                                                             <td><button type="button" className="btn btn-warning fa fa-money" data-toggle="modal" data-target="#PagarCanchaje" onClick={()=>handleShowModalPago(row,row.id)} disabled={row.local == 0} style={{backgroundColor:row.local == 0 ? 'gray' : null}}></button>
                                                       </td>

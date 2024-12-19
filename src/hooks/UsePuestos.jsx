@@ -14,9 +14,15 @@ const UsePuestos = () => {
     const [open, setOpen] = useState(false)
     const [observacion, setObservacion] = useState(null)
 
+    const [showModalObservacion, setShowModalObservacion] = useState(false)
+    const [idpuesto, setIdpuesto] = useState(null)
+
+    const openModalObservacion = (id) => {
+      setIdpuesto(id)
+      setShowModalObservacion(!showModalObservacion)
+    }
 
     const showModal = () => {
-        console.log("click modal");
         setIsModalVisible(true);
     };
 
@@ -39,6 +45,7 @@ const UsePuestos = () => {
         setIsModalVisible(false);
         setIsEditModalVisible(false)
         setOpen(false);
+        setShowModalObservacion(false);
     };
 
     
@@ -76,7 +83,11 @@ const UsePuestos = () => {
     setOpen,
     showOpen,
     observacion,
-    setObservacion
+    setObservacion,
+
+    showModalObservacion,
+    openModalObservacion,
+    idpuesto
    }
     
   
