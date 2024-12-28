@@ -1,11 +1,10 @@
-import {useState, useContext} from 'react'
+import {useState, useContext, useEffect} from 'react'
 import avatar from '../assets/user.png'
-import { Link } from 'react-router-dom';
+import { Link  } from 'react-router-dom';
 import { UserContext } from '../context/UserProvider';
 
 const Menu = () => {
-
-    const { user } = useContext(UserContext);
+    const { user,logout } = useContext(UserContext);
     // const [messages] = useState([
     //     { id: 1, name: 'Dante Medina', time: '3 mins ago', message: 'Film festivals used to be do-or-die moments for movie makers. They were where...', img: avatar },
     //     { id: 2, name: 'Dante Medina', time: '3 mins ago', message: 'Film festivals used to be do-or-die moments for movie makers. They were where...', img: avatar },
@@ -17,6 +16,14 @@ const Menu = () => {
 
       // Función para alternar la visibilidad del dropdown
       const toggleDropdown = () => setIsOpen(!isOpen);
+
+     
+
+      const handleLogout = () => {
+        logout();
+      };
+
+    
   return (
     <div className="top_nav">
     <div className="nav_menu">
@@ -47,7 +54,7 @@ const Menu = () => {
                 {/* <Link className="dropdown-item" to="/herramientas">
                     <span>Herramientas</span>
                 </Link> */}
-                <Link className="dropdown-item" to="/">
+                <Link className="dropdown-item"  onClick={handleLogout}>
                     <i className="fa fa-sign-out pull-right"></i> Salir
                 </Link>
                 </div>

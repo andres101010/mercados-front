@@ -3,7 +3,7 @@ import { Modal, Form, Input, Button, DatePicker, Select  } from 'antd';
 import UsePuestos from '../hooks/UsePuestos.jsx';
 import { createLocal, editLocal, getLocal, createObservacion } from '../services/local.js';
 import Swal from 'sweetalert2';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { getAllArrendatarios } from '../services/arrendatario.js';
 const Puestos = () => {
@@ -37,37 +37,12 @@ const Puestos = () => {
 
     showModalObservacion,
     openModalObservacion,
-    idpuesto
+    idpuesto,
+    setIdpuesto
 
   } = UsePuestos();
 
-  // const datos = [
-  //   {
-  //     nombre: "Andrea Joana Miranda Cano",
-  //     cedula: "7152364",
-  //     numeroLocal: "001",
-  //     estado: "Asignado",
-  //     estadoColor: "darkcyan",
-  //     fecha: "10/15/2023"
-  //   },
-  //   {
-  //     nombre: "",
-  //     cedula: "",
-  //     numeroLocal: "002",
-  //     estado: "Libre",
-  //     estadoColor: "rgb(180, 17, 5)",
-  //     fecha: ""
-  //   },
-  //   {
-  //     nombre: "",
-  //     cedula: "",
-  //     numeroLocal: "003",
-  //     estado: "Libre",
-  //     estadoColor: "rgb(180, 17, 5)",
-  //     fecha: ""
-  //   }
-  // ];
-
+ 
 
   const handleGetArrendatarios = async (place) => {
     try {
@@ -428,55 +403,6 @@ const Puestos = () => {
                       </thead>
 
 
-                      {/* <tbody>
-                        <tr>
-                          <td>Andrea Joana Miranda Cano</td>
-                          <td>7152364</td>
-                          <td>001</td>
-                          <td><label style={{color:"white", backgroundColor:"darkcyan"}}>Asignado</label></td>
-                          <td>10/15/2023</td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
-                          </td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-plus"></button>
-                            <button type="button" className="btn btn-primary fa fa-pencil"></button>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td> <label style={{ opacity: 'calc(0)' }}
-                          >zzz</label></td>
-                          <td></td>
-                          <td>002</td>
-                          <td><label style= {{color:"white", backgroundcolor:"rgb(180, 17, 5) "}}>Libre</label></td>
-                          <td></td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
-                          </td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-plus"></button>
-                            <button type="button" className="btn btn-primary fa fa-pencil"></button>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td> <label style={{opacity: "calc(0)"}}>zzz</label></td>
-                          <td></td>
-                          <td>003</td>
-                          <td><label style={{color:"white", backgroundColor:"rgb(180, 17, 5)"}}>Libre</label></td>
-                          <td></td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
-                          </td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-plus"></button>
-                            <button type="button" className="btn btn-primary fa fa-pencil"></button>
-                          </td>
-                        </tr>
-                        
-                      </tbody> */}
-
                       <tbody>
                         { data.length === 0 ?
                         (
@@ -543,7 +469,7 @@ const Puestos = () => {
                                 }}
                               >{dato?.arrendatario?.rubro}</label></td>
                               <td  data-label="Contrato">
-                                <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
+                               <Link to={`/${dato._id}contrato/pdf`}> <button type="button" className="btn btn-info fa fa-file-pdf-o" ></button></Link>
                               </td>
                               <td  data-label="Asig">
                                 <button type="button" className="btn btn-info fa fa-plus" onClick={() => handleCreateLocal() }></button>
@@ -554,7 +480,7 @@ const Puestos = () => {
                                 <button type="button" className="btn btn-danger fa fa-file-pdf-o" onClick={()=>{showOpen(dato._id)}}></button>
                               </td>
                               <td  data-label="Ver">
-                                <button type="button" className="btn btn-primary fa fa-arrow-right" onClick={()=>{openModalObservacion(dato._id)}} disabled={dato?.observaciones.length == 0}> {dato?.observaciones.length == 0 ? "Sin Observaciones" : `Total: ${dato?.observaciones?.length}`}</button>
+                                <button type="button" className="btn btn-primary fa fa-arrow-right" onClick={()=>{openModalObservacion(dato._id)}} disabled={dato?.observaciones.length == 0}> {dato?.observaciones.length == 0 ? "Total 0" : `Total: ${dato?.observaciones?.length}`}</button>
                               </td>
                             </tr>
                           ))}

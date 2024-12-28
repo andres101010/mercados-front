@@ -64,7 +64,7 @@ const Sidebar = (props) => {
                 <li className={activeIndex === 0 ? "active" : ""} onClick={() => handleClick(0)}>
                   <Link to="/inicio"><i className="fa fa-home"></i> Inicio</Link>
                 </li>
-                <li className={activeIndex === 1 ? "active" : ""} onClick={() => handleClick(1)}>
+                <li className={activeIndex === 1 ? "active" : ""} onClick={() => handleClick(1)} style={{display: user.level == 2 ? "none" : "block"}}>
                   <Link to="/mercados"><i className="fa fa-shopping-cart"></i> Mercados</Link>
                 </li>
                 <li className={activeIndex === 2 ? "active" : ""}    >
@@ -118,11 +118,15 @@ const Sidebar = (props) => {
                     }
                   </ul>
                 </li>
-                <li className={activeIndex === 4 ? "active" : ""} onClick={() => handleClick(4)}>
+                <li className={activeIndex === 4 ? "active" : ""} onClick={() => handleClick(4)} style={{display: user.level == 2 ? "none" : "block"}}>
                   <Link to="/usuarios"><i className="fa fa-user"></i> Usuarios</Link>
                 </li>
-                <li className={activeIndex === 5 ? "active" : ""} onClick={() => handleClick(5)}>
+                <li className={activeIndex === 5 ? "active" : ""} onClick={() => handleClick(5)} style={{display: user.level == 2 ? "none" : "block"}}>
                   <Link to="/informes"><i className="fa fa-file-pdf-o"></i> Informes</Link>
+                </li>
+                <li className={activeIndex === 6 ? "active" : ""} onClick={() => handleClick(6)} style={{display: user.level == 2 ? "none" : "block"}}>
+                  <Link to="/tickets"><i className="fa fa-ticket"></i>
+                  Tickets</Link>
                 </li>
               </ul>
             </div>
@@ -130,20 +134,7 @@ const Sidebar = (props) => {
           {/* /Sidebar Menu */}
 
           {/* Footer Menu Buttons */}
-          <div className="sidebar-footer hidden-small">
-            <a data-toggle="tooltip" data-placement="top" title="Herramientas">
-              <span className="glyphicon glyphicon-cog" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Pantalla Completa">
-              <span className="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Ver">
-              <span className="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Salir" href="login.html">
-              <span className="glyphicon glyphicon-off" aria-hidden="true"></span>
-            </a>
-          </div>
+         
           {/* /Footer Menu Buttons */}
         </div>
       </div>
