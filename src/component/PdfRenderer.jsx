@@ -29,7 +29,8 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
         },
         text: {
             fontSize: 15,
-             color:"darkcyan"
+             color:"darkcyan",
+             textAlign:"center"
         },
         p: {
             fontSize: 12,
@@ -43,7 +44,8 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
         headerArrendatario: {
             fontSize: 22,
             margin: 15,
-            color:"darkcyan"
+            color:"darkcyan",
+            textAlign:"center"
         },
         sectionPago: {
             margin: 10,
@@ -62,6 +64,13 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
             fontSize: 22,
             color:"darkcyan",
             marginBottom: "10px",
+        },
+        headerContrato: {
+            fontSize: 20,
+            margin: 15,
+            color:"darkgray",
+            textAlign: "center"
+
         }
     });
     
@@ -72,29 +81,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
     // console.log("dataPdfCONTRATO", dataPdfContrato);
 
     return (
-        // <Document>
-        //     <Page size="A4" style={styles.page}>
-        //         {
-        //             // eslint-disable-next-line react/prop-types
-        //             dataPdf.length == 0 ? null :
-        //             // eslint-disable-next-line react/prop-types
-        //             dataPdf.map((row, i)=>(
-        //                 <>
-        //                 <View style={styles.section}>
-        //                     <Text style={styles.header}>Reporte De Mercados</Text>
-        //                 </View>
-        //                 <View style={styles.section}>
-        //                     <Text style={styles.text}>Este es un ejemplo de texto dentro del PDF generado.</Text>
-        //                 </View>
-        //                 <View style={styles.section}>
-        //                     <Text style={styles.text}>¡React-PDF es muy útil para crear documentos dinámicos!</Text>
-        //                 </View>
-        //                 </>
-        //             ))
-        //         }
-                
-        //     </Page>
-        // </Document>
+       
         <Document>
         <Page size="A4" style={styles.page}>
                     <View style={styles.sectionHeader}>
@@ -121,7 +108,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
                             </Text>
                             : dataPdfContrato.length > 0 ?
                             <Text style={styles.headerArrendatario}>
-                                    {'Acta De Entrega: '}
+                                    {'Acta De Entrega '}
                             </Text> : null
                     }
             {
@@ -225,20 +212,74 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
             dataPdfContrato.map((row)=>{
                 return (
                     <View style={styles.sectionContrato} key={row.id}>
-                        <Text style={styles.header}>Contrato</Text>
+                        
                         <Text style={styles.text}>
-                            {`Fecha De Contrato: ${row.fechaDeContrato}`}
+                        {`Por medio del presente documento, el Entregante se compromete a realizar el alquiler del puesto ubicado en ${row.contrato.mercado.direccion} al Receptor :${row.contrato.arrendatario.name}${row.contrato.arrendatario.lastName}, en las condiciones descritas a continuación, y ambas partes acuerdan los términos relacionados con el traspaso de dicho puesto.`}
+                        </Text>
+
+                        <Text style={styles.headerContrato}>
+                            {`Descripción del Inmueble`}
+                        </Text>
+                        <Text style={styles.text}>{`DIRECCION: ${row.contrato.mercado.direccion}`}</Text>
+                        <Text style={styles.text}>
+                            {`TIPO DE INMUEBLE: Puesto`}
                         </Text>
                         <Text style={styles.text}>
+                        {`ACCESORIOS INCLUIDOS: Unicamente EL Espacio`}
                         </Text>
                         <Text style={styles.text}>
+                        {`SERVICIOS CONECTADOS: Agua Y Luz`}
                         </Text>
                         <Text style={styles.text}>
+                        {`PUESTO N°: ${row.contrato.mercado.local}`}
                         </Text>
                         <Text style={styles.text}>
+                        {`FECHA DE CONTRATO: ${row.contrato.fechaDeContrato}`}
+                        </Text>
+                        <Text style={styles.headerContrato}>
+                            {`Informacion Del Arrendatario`}
                         </Text>
                         <Text style={styles.text}>
+                            {`NOMBRE: ${row.contrato.arrendatario.name}${row.contrato.arrendatario.lastName}`}
                         </Text>
+                        <Text style={styles.text}>
+                            {`CARNET: ${row.contrato.arrendatario.cedula}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`TELEFONO: ${row.contrato.arrendatario.phone}`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`DIRECCION: ${row.contrato.arrendatario.address}`}
+
+                        </Text>
+                        <Text style={styles.text}>
+                            {`RUBRO: ${row.contrato.arrendatario.rubro}`}
+
+                        </Text>
+
+                         <Text style={styles.headerContrato}>
+                            {`Declaracion De Conformidad`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`Ambas partes manifiestan su conformidad con las condiciones descritas y aceptan los términos establecidos en este documento. Las partes firman el presente compromiso en dos ejemplares de igual tenor, quedando cada una con una copia.`}
+                        </Text>
+
+                         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: '30px' }}>
+                        {/* Columna de Arrendatario */}
+                        <View style={{ alignItems: 'center' }}>
+                            <Text style={{ textAlign: 'center' }}>{`----------`}</Text>
+                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Firma`}</Text>
+                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Arrendatario`}</Text>
+                        </View>
+
+                        {/* Columna de Arrendado */}
+                        <View style={{ alignItems: 'center' }}>
+                            <Text style={{ textAlign: 'center' }}>{`----------`}</Text>
+                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Firma`}</Text>
+                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Arrendado`}</Text>
+                        </View>
+                        </View>
+
                     </View>
                 )
             })
