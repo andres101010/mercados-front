@@ -121,9 +121,9 @@ const Sidebar = (props) => {
                 <li className={activeIndex === 4 ? "active" : ""} onClick={() => handleClick(4)} style={{display: user.level == 2 ? "none" : "block"}}>
                   <Link to="/usuarios"><i className="fa fa-user"></i> Usuarios</Link>
                 </li>
-                <li className={activeIndex === 5 ? "active" : ""} onClick={() => handleClick(5)} style={{display: user.level == 2 ? "none" : "block"}}>
+                {/* <li className={activeIndex === 5 ? "active" : ""} onClick={() => handleClick(5)} style={{display: user.level == 2 ? "none" : "block"}}>
                   <Link to="/informes"><i className="fa fa-file-pdf-o"></i> Informes</Link>
-                </li>
+                </li> */}
                 <li className={activeIndex === 6 ? "active" : ""} onClick={() => handleClick(6)} style={{display: user.level == 2 ? "none" : "block"}}>
                   <Link to="/tickets"><i className="fa fa-ticket"></i>
                   Tickets</Link>

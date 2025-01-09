@@ -73,9 +73,8 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
 
         }
     });
-    
     let nameMercado;
-    dataPdf.length > 0 ? dataPdf?.map((row)=> nameMercado = row.mercado.nombre) : dataPdfPago.length > 0 ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : null
+    dataPdf.length > 0 ? dataPdf?.map((row)=> nameMercado = row.mercado.nombre) : dataPdfPago.length > 0 ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : nameMercado = "Este Mercado No Tiene Puestros Asignados"
     
     // console.log("dataPdfPago", dataPdfPago);
     // console.log("dataPdfCONTRATO", dataPdfContrato);
@@ -303,7 +302,6 @@ const PdfRenderer = () => {
     const infoPdf = async () => {
         try {
             const response = await getInfoPdf(place);
-            console.log("resp", response.data);
             const noIncludesPago = response.data.every(row => !row.pago); 
             const noIncludesContrato = response.data.every(row => !row.contrato); 
             if (JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesContrato) {
