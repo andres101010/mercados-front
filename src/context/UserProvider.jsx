@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { getMercados } from '../services/mercados';
 import { jwtDecode } from 'jwt-decode';
-import { logoutServices } from '../services/login';
+import { logoutService } from '../services/login';
 // Crea el contexto fuera del componente
 // eslint-disable-next-line react-refresh/only-export-components
 export const UserContext = createContext(null);
@@ -75,7 +75,7 @@ const UserProvider = ({ children }) => {
   }, []);
 
   const logout = async () => {
-    await logoutServices(); 
+    await logoutService(); 
     setUser(null); 
     localStorage.removeItem("user");
   };
