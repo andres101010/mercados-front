@@ -9,7 +9,7 @@ export const UserContext = createContext(null);
 // eslint-disable-next-line react/prop-types
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [mercados, setMercados] = useState([])
+  const [mercados, setMercados] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const handleMercados = async () => {
