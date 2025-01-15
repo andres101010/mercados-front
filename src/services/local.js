@@ -20,8 +20,11 @@ export const editLocal = async (body,id) => {
 }
 
 export const createObservacion = async (id,body) => {
-    console.log("body", body);
-    console.log("id", id);
     const result = await axios.post(`${url}/createObservacion/${id}`,body, {withCredentials : true})
+    return result;
+}
+
+export const resetLocal = async (id) => {
+    const result = await axios.put(`${url}/resetLocal/${id}`,{}, {withCredentials : true})
     return result;
 }
