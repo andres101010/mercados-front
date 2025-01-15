@@ -523,8 +523,6 @@ const Puestos = () => {
                               </td>
                             </tr>
                           ))}
-
-                        
                       </tbody>
 
 
