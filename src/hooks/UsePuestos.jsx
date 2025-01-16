@@ -40,6 +40,7 @@ const UsePuestos = () => {
     };
 
   const [form] = Form.useForm();
+  const [observationForm] = Form.useForm();
 
    const showOpen = (id) => {
     setObservacion(id, true);
@@ -95,7 +96,9 @@ const UsePuestos = () => {
     showModalObservacion,
     openModalObservacion,
     idpuesto,
-    setIdpuesto
+    setIdpuesto,
+
+    observationForm
    }
     
   

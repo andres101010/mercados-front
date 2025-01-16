@@ -38,7 +38,8 @@ const Puestos = () => {
     showModalObservacion,
     openModalObservacion,
     idpuesto,
-    setIdpuesto
+    setIdpuesto,
+    observationForm
 
   } = UsePuestos();
 
@@ -102,7 +103,7 @@ const Puestos = () => {
       try {
         await createObservacion(observacion, values)
         Swal.fire({
-          icon: 'Success',
+          icon: 'success',
           title: 'success',
           text: "Oservacion Creada Con Exito..",
           confirmButtonText: 'Aceptar'
@@ -136,16 +137,15 @@ const Puestos = () => {
         newNumber: currentLocation.newNumber
       }
       await editLocal(body, currentLocation._id)
-      await handleGetLocal(place)
       Swal.fire({
         icon: 'success',
         title: 'Success',
         text: 'Puesto Editado Con Exito',
         confirmButtonText: 'Aceptar'
-    });
-    form.resetFields();
-
+      });
       handleOk(); 
+      form.resetFields();
+      await handleGetLocal(place)
 
     } catch (error) {
       console.log("Error: ", error);
@@ -193,7 +193,6 @@ const Puestos = () => {
 
   const reset = async (id) => {
     try {
-      console.log("id", id);
       await resetLocal(id)
       Swal.fire({
         icon: 'success',
@@ -315,10 +314,10 @@ const Puestos = () => {
              
               
                   <Form
-                    form={form}
+                    form={observationForm}
                   
                     layout="vertical"
-                    name="edit-form"
+                    name="edit-observacion"
                     initialValues={initialValues}
                     onFinish={onFinish} // Maneja el envío del formulario
                   >
