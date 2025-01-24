@@ -1,8 +1,8 @@
 
 import axios from "axios";
 
-const url = import.meta.env.VITE_URL_LOCAL;
-// const url = import.meta.env.VITE_URL_SERVICE;
+// const url = import.meta.env.VITE_URL_LOCAL;
+const url = import.meta.env.VITE_URL_SERVICE;
 
 export const login = async (body) => {
     // try {
