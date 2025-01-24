@@ -17,6 +17,7 @@ const Dashboard = () => {
 
 const url = import.meta.env.VITE_URL_LOCAL;
 // const url = import.meta.env.VITE_URL_SERVICE;
+   
 
    const [info, setInfo] = useState([])
 
@@ -26,6 +27,7 @@ const url = import.meta.env.VITE_URL_LOCAL;
       setInfo(result.data);
     } catch (error) {
       console.log("Error: ", error);
+      throw error
     }
    }
 

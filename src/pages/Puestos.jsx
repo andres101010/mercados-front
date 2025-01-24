@@ -1,9 +1,9 @@
 
 import { Modal, Form, Input, Button, DatePicker, Select  } from 'antd';
 import UsePuestos from '../hooks/UsePuestos.jsx';
-import { createLocal, editLocal, getLocal, createObservacion } from '../services/local.js';
+import { createLocal, editLocal, getLocal, createObservacion, resetLocal } from '../services/local.js';
 import Swal from 'sweetalert2';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { getAllArrendatarios } from '../services/arrendatario.js';
 const Puestos = () => {
@@ -37,37 +37,13 @@ const Puestos = () => {
 
     showModalObservacion,
     openModalObservacion,
-    idpuesto
+    idpuesto,
+    setIdpuesto,
+    observationForm
 
   } = UsePuestos();
 
-  // const datos = [
-  //   {
-  //     nombre: "Andrea Joana Miranda Cano",
-  //     cedula: "7152364",
-  //     numeroLocal: "001",
-  //     estado: "Asignado",
-  //     estadoColor: "darkcyan",
-  //     fecha: "10/15/2023"
-  //   },
-  //   {
-  //     nombre: "",
-  //     cedula: "",
-  //     numeroLocal: "002",
-  //     estado: "Libre",
-  //     estadoColor: "rgb(180, 17, 5)",
-  //     fecha: ""
-  //   },
-  //   {
-  //     nombre: "",
-  //     cedula: "",
-  //     numeroLocal: "003",
-  //     estado: "Libre",
-  //     estadoColor: "rgb(180, 17, 5)",
-  //     fecha: ""
-  //   }
-  // ];
-
+ 
 
   const handleGetArrendatarios = async (place) => {
     try {
@@ -127,11 +103,13 @@ const Puestos = () => {
       try {
         await createObservacion(observacion, values)
         Swal.fire({
-          icon: 'Success',
+          icon: 'success',
           title: 'success',
           text: "Oservacion Creada Con Exito..",
           confirmButtonText: 'Aceptar'
       });
+        await handleGetLocal(place) 
+       
         form.resetFields();
         handleOk(); // Llama a handleOk con los datos del formulario
       } catch (error) {
@@ -149,8 +127,8 @@ const Puestos = () => {
   const onFinishEdit = async () => {
     try {
       const body ={
-        nombre: currentLocation.nombre,
-        carnet: currentLocation.carnet,
+        // nombre: currentLocation.nombre,
+        // carnet: currentLocation.carnet,
         number: currentLocation.number,
         fecha: currentLocation.fecha,
         // arrendatario: arrendatarios?.map((row)=>row._id),
@@ -159,16 +137,15 @@ const Puestos = () => {
         newNumber: currentLocation.newNumber
       }
       await editLocal(body, currentLocation._id)
-      await handleGetLocal(place)
       Swal.fire({
         icon: 'success',
         title: 'Success',
         text: 'Puesto Editado Con Exito',
         confirmButtonText: 'Aceptar'
-    });
-    form.resetFields();
-
+      });
       handleOk(); 
+      form.resetFields();
+      await handleGetLocal(place)
 
     } catch (error) {
       console.log("Error: ", error);
@@ -208,11 +185,35 @@ const Puestos = () => {
       ...(changedValues.number && { newNumber: changedValues.number }),
     }));
   };
-  const data = !valueInput ? puestos : puestos.filter((row)=> row.name.toLowerCase().includes(valueInput.toLowerCase()) || row.number.toString().includes(valueInput));
+  const data = !valueInput ? puestos : puestos.filter((row)=> row?.name?.toLowerCase().includes(valueInput.toLowerCase()) || row?.carnet?.toString().includes(valueInput) || row?.arrendatario?.rubro?.toLowerCase().includes(valueInput)) ;
   const handleData = (e) => {
     setValueInput(e.target.value)
   }
   const dataObservacion = showModalObservacion ? puestos.find((row)=>row._id == idpuesto) : [];
+
+  const reset = async (id) => {
+    try {
+      await resetLocal(id)
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Puesto Reseteado Con Exito',
+        confirmButtonText: 'Aceptar'
+    });
+      await handleGetLocal(place) 
+    } catch (error) {
+      console.log("error", error);
+      let message = error.response.data.message;
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+      throw error;
+    }
+  }
+
   return (
     <div>
       <div className="right_col" role="main">
@@ -235,8 +236,13 @@ const Puestos = () => {
                     name="edit-form"
                    
                     onFinish={onFinishEdit} // Define `onFinishEdit` para procesar los datos editados
+                    // initialValues={{
+                    //   number: currentLocation?.number,
+                    //   fecha: currentLocation?.fecha ? moment(currentLocation.fecha, 'YYYY-MM-DD') : null,
+                    //   arrendatario: currentLocation?.arrendatario, // Aquí asegúrate de que coincida con el `value` en `<Option>`
+                    // }}
                   >
-                    <Form.Item
+                    {/* <Form.Item
                       label="Nombre "
                       name="nombre"
                       rules={[{ required: true, message: 'Por favor ingrese el nombre !' }]}
@@ -250,7 +256,7 @@ const Puestos = () => {
                       rules={[{ required: true, message: 'Por favor ingrese El Carnet!' }]}
                     >
                       <Input />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                       label="Numero Del Puesto"
@@ -279,7 +285,7 @@ const Puestos = () => {
                         ) : (
                           arrendatarios.map((row, i) => (
                             <Option key={i} value={row.name}>
-                              {row.name}
+                              {row.name + " " + row.lastName}
                             </Option>
                           ))
                         )}
@@ -308,10 +314,10 @@ const Puestos = () => {
              
               
                   <Form
-                    form={form}
+                    form={observationForm}
                   
                     layout="vertical"
-                    name="edit-form"
+                    name="edit-observacion"
                     initialValues={initialValues}
                     onFinish={onFinish} // Maneja el envío del formulario
                   >
@@ -400,6 +406,8 @@ const Puestos = () => {
                     </div> */}
 
                     <div>
+
+
                     <div className="input-group" style={{ width: '200px' }}>
                                             <span className="input-group-text bg-light">
                                                <i className="fas fa-search"></i>
@@ -410,6 +418,11 @@ const Puestos = () => {
                                               placeholder="Buscar" 
                                               onChange={handleData} 
                                             />
+
+
+                    </div>
+                    <div>
+                      <button type="button" className="btn btn-info fa fa-plus" onClick={() => handleCreateLocal() }> Agregar Puesto</button>
                     </div>
                     <table id="datatable-buttons" className="table table-striped table-bordered" style={{width:"100%"}}>
                       <thead>
@@ -421,61 +434,12 @@ const Puestos = () => {
                           <th>Fecha de Contrato</th>
                           <th>Rubro</th>
                           <th>Contrato</th>
-                          <th>Desiganar</th>
+                          <th>Desiganar/reset</th>
                           <th>Agregar Observaciones</th>
                           <th>Ver Observaciones</th>
                         </tr>
                       </thead>
 
-
-                      {/* <tbody>
-                        <tr>
-                          <td>Andrea Joana Miranda Cano</td>
-                          <td>7152364</td>
-                          <td>001</td>
-                          <td><label style={{color:"white", backgroundColor:"darkcyan"}}>Asignado</label></td>
-                          <td>10/15/2023</td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
-                          </td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-plus"></button>
-                            <button type="button" className="btn btn-primary fa fa-pencil"></button>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td> <label style={{ opacity: 'calc(0)' }}
-                          >zzz</label></td>
-                          <td></td>
-                          <td>002</td>
-                          <td><label style= {{color:"white", backgroundcolor:"rgb(180, 17, 5) "}}>Libre</label></td>
-                          <td></td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
-                          </td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-plus"></button>
-                            <button type="button" className="btn btn-primary fa fa-pencil"></button>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td> <label style={{opacity: "calc(0)"}}>zzz</label></td>
-                          <td></td>
-                          <td>003</td>
-                          <td><label style={{color:"white", backgroundColor:"rgb(180, 17, 5)"}}>Libre</label></td>
-                          <td></td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
-                          </td>
-                          <td>
-                            <button type="button" className="btn btn-info fa fa-plus"></button>
-                            <button type="button" className="btn btn-primary fa fa-pencil"></button>
-                          </td>
-                        </tr>
-                        
-                      </tbody> */}
 
                       <tbody>
                         { data.length === 0 ?
@@ -543,23 +507,21 @@ const Puestos = () => {
                                 }}
                               >{dato?.arrendatario?.rubro}</label></td>
                               <td  data-label="Contrato">
-                                <button type="button" className="btn btn-info fa fa-file-pdf-o"></button>
+                               <Link to={`/${dato._id}contrato/pdf`}> <button type="button" className="btn btn-info fa fa-file-pdf-o" ></button></Link>
                               </td>
-                              <td  data-label="Asig">
-                                <button type="button" className="btn btn-info fa fa-plus" onClick={() => handleCreateLocal() }></button>
-                                <button type="button" className="btn btn-primary fa fa-pencil" onClick={() => handleEdit(dato, dato._id)}></button>
+                              <td  data-label="Asig/reset">
+                                <button type="button" className="btn btn-primary fa fa-pencil" onClick={() =>  handleEdit(dato, dato._id)}></button>
+                                <button type="button" className="btn btn-secondary fa fa-refresh" onClick={() => reset(dato._id)}></button>
                               </td>
 
                               <td  data-label="Agre. Observac">
                                 <button type="button" className="btn btn-danger fa fa-file-pdf-o" onClick={()=>{showOpen(dato._id)}}></button>
                               </td>
                               <td  data-label="Ver">
-                                <button type="button" className="btn btn-primary fa fa-arrow-right" onClick={()=>{openModalObservacion(dato._id)}} disabled={dato?.observaciones.length == 0}> {dato?.observaciones.length == 0 ? "Sin Observaciones" : `Total: ${dato?.observaciones?.length}`}</button>
+                                <button type="button" className="btn btn-primary fa fa-arrow-right" onClick={()=>{openModalObservacion(dato._id)}} disabled={dato?.observaciones.length == 0}> {dato?.observaciones.length == 0 ? "Total 0" : `Total: ${dato?.observaciones?.length}`}</button>
                               </td>
                             </tr>
                           ))}
-
-                        
                       </tbody>
 
 

@@ -17,6 +17,13 @@ const UsePuestos = () => {
     const [showModalObservacion, setShowModalObservacion] = useState(false)
     const [idpuesto, setIdpuesto] = useState(null)
 
+    // const [showModalContrato, setShowModalContrato] = useState(false)
+
+    // const openModalContrato = (id) => {
+    //     setIdpuesto(id)
+    //     setShowModalContrato(true)
+    // }
+
     const openModalObservacion = (id) => {
       setIdpuesto(id)
       setShowModalObservacion(!showModalObservacion)
@@ -33,6 +40,7 @@ const UsePuestos = () => {
     };
 
   const [form] = Form.useForm();
+  const [observationForm] = Form.useForm();
 
    const showOpen = (id) => {
     setObservacion(id, true);
@@ -87,7 +95,10 @@ const UsePuestos = () => {
 
     showModalObservacion,
     openModalObservacion,
-    idpuesto
+    idpuesto,
+    setIdpuesto,
+
+    observationForm
    }
     
   

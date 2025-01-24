@@ -13,3 +13,14 @@ export const login = async (body) => {
     //     return error;
     // }
 }
+
+export const logoutService = async () => {
+    try {
+        const res = await axios.post(`${url}/logoutUser`,{}, { withCredentials: true});
+        // localStorage.removeItem('user');
+        return res;
+    } catch (error) {
+        console.log("error", error);
+        throw error;
+    }
+}

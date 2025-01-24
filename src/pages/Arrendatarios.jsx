@@ -1,11 +1,14 @@
 import { Link, useParams } from 'react-router-dom';
 import { getAllArrendatarios, createArrendatario } from '../services/arrendatario';
 import UseArrendatarios from '../hooks/UseArrendatarios';
-import { useEffect, useCallback } from 'react';
-import { Modal, Form, Input, Button, DatePicker,Checkbox } from 'antd';
+import { useEffect, useState, useCallback } from 'react';
+import { Modal, Form, Input, Button, DatePicker,Checkbox, List  } from 'antd';
 import Swal from 'sweetalert2';
 import { getPagos, createPago } from '../services/pagos';
 import moment from "moment";
+
+
+const { MonthPicker, RangePicker } = DatePicker;
 
 const Arrendatarios = () => {
   const [form] = Form.useForm();
@@ -39,11 +42,11 @@ const Arrendatarios = () => {
     } = UseArrendatarios();
     const { place } = useParams();
 
-  const handleCheckboxChange = (e) => {
-    setIsMultipleDates(e.target.checked);
-    // Opcional: Resetear el campo de fecha al cambiar la opción
-    form.resetFields(['fecha', 'fechas']);
-  };
+  // const handleCheckboxChange = (e) => {
+  //   setIsMultipleDates(e.target.checked);
+  //   // Opcional: Resetear el campo de fecha al cambiar la opción
+  //   form.resetFields(['fecha', 'fechas']);
+  // };
 
 
     const getArrendatarios = async (place) => {
@@ -127,30 +130,32 @@ const Arrendatarios = () => {
 
   const onFinishEdit = async (values) => {
     try {
-       
+      
        // Convertir las fechas en formato deseado antes de enviarlas
-    if (values.fechas) {
-      const [startDate, endDate] = values.fechas;
-      const startDateString = startDate.format('YYYY-MM-DD'); // Convierte a string
-      const endDateString = endDate.format('YYYY-MM-DD');     // Convierte a string
+    // if (values.fechas) {
+    //   const [startDate, endDate] = values.fechas;
+    //   const startDateString = startDate.format('YYYY-MM-DD'); // Convierte a string
+    //   const endDateString = endDate.format('YYYY-MM-DD');     // Convierte a string
      
-      const allDates = [];
-      let currentDate = moment(startDateString).startOf('day');
+    //   const allDates = [];
+    //   let currentDate = moment(startDateString).startOf('day');
 
-      while (currentDate.isSameOrBefore(moment(endDateString).startOf('day'))) {
-        allDates.push(currentDate.format('YYYY-MM-DD'));
-        currentDate.add(1, 'day');
-      }
+    //   while (currentDate.isSameOrBefore(moment(endDateString).startOf('day'))) {
+    //     allDates.push(currentDate.format('YYYY-MM-DD'));
+    //     currentDate.add(1, 'day');
+    //   }
 
-      // Reemplazar fechas por el rango generado
-      values.fechas = allDates;
-    }
+    //   // Reemplazar fechas por el rango generado
+    //   values.fechas = allDates;
+    // }
 
        const body = {
         arrendatario:currentLocation._id,
         local: currentLocation.local?.map((row)=>row._id),
-        diasPagados: values.fechas ? values.fechas : [values.fecha.format('YYYY-MM-DD')],
-        monto: values.monto
+        // diasPagados: values.fechas ? values.fechas : [values.fecha.format('YYYY-MM-DD')],
+        monto: values.monto,
+        excludedDates : excludedDates,
+        mes: values.mes
        }
       const res = await createPago(body)
       const respSuccess = res.data.message || 'Pago Exitoso.'
@@ -163,6 +168,9 @@ const Arrendatarios = () => {
        form.resetFields();
       handleOk(); 
       setShowModaPago(false);
+      setExcludedDates([])
+      setSelectedMonth(null)
+      setIsCalendarOpen(false)
     } catch (error) {
       console.log("Error: ", error);
       const errorMessage = error?.response?.data?.error || 'Ocurrió un error al crear el Pago.';
@@ -179,6 +187,54 @@ const Arrendatarios = () => {
   const handleData = (e) => {
     setValueInput(e.target.value)
   }
+
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [excludedDates, setExcludedDates] = useState([]);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const handleCheckboxChange = (e) => {
+    setIsMultipleDates(e.target.checked);
+    // Reset selected month and excluded dates when toggling
+    setSelectedMonth(null);
+    setExcludedDates([]);
+    form.resetFields(['fecha', 'fechas']);
+
+  };
+
+
+  const handleMonthChange = (date) => {
+    setSelectedMonth(date);
+    setExcludedDates([]); // Reset excluded dates when changing the month
+  };
+
+  const handleDateSelection = (date) => {
+    if (!date) return;
+
+    const formattedDate = date.format('YYYY-MM-DD');
+    setExcludedDates((prev) => {
+      if (!prev.includes(formattedDate)) {
+        return [...prev, formattedDate];
+      }
+      return prev;
+    });
+  };
+
+  const handleRemoveDate = (dateToRemove) => {
+    setExcludedDates((prev) => prev.filter((date) => date !== dateToRemove));
+  };
+
+  const disabledDate = (current) => {
+    // Disable dates outside the selected month
+    return (
+      !current ||
+      current.month() !== selectedMonth?.month() ||
+      current.year() !== selectedMonth?.year()
+    );
+  };
+
+  const toggleCalendar = () => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
+
   return (
     <div>
           <Modal
@@ -352,7 +408,7 @@ const Arrendatarios = () => {
                     </Checkbox>
                   </Form.Item>
 
-                  {!isMultipleDates ? (
+                  {/* {!isMultipleDates ? (
                       <Form.Item
                         label="Fecha Del Pago"
                         name="fecha"
@@ -369,45 +425,77 @@ const Arrendatarios = () => {
                         >
                           <DatePicker.RangePicker
                             format="YYYY-MM-DD"
-                            // onChange={(dates, dateStrings) => {
-                            //   if (dates && dates.length === 2) {
-                            //     // Usamos los valores de `dateStrings` para garantizar precisión
-                            //     const [startDateStr, endDateStr] = dateStrings;
-
-                            //     // Convertimos las cadenas en Moment.js
-                            //     const startDate = moment(startDateStr, 'YYYY-MM-DD').startOf('day');
-                            //     const endDate = moment(endDateStr, 'YYYY-MM-DD').startOf('day');
-
-                            //     console.log("startDate:", startDate.format('YYYY-MM-DD'));
-                            //     console.log("endDate:", endDate.format('YYYY-MM-DD'));
-
-                            //     const allDates = [];
-                            //     let currentDate = startDate.clone();
-
-                            //     // Generar las fechas intermedias
-                            //     while (currentDate.isSameOrBefore(endDate, 'day')) {
-                            //       allDates.push(currentDate.format('YYYY-MM-DD'));
-                            //       currentDate.add(1, 'day'); // Avanzar al siguiente día
-                            //     }
-
-                            //     console.log('Fechas generadas:', allDates);
-                            //     // Aquí puedes manejar `allDates` según sea necesario
-                            //     return allDates
-                            //   } else {
-                            //     console.log("No se seleccionaron dos fechas válidas");
-                            //   }
-                            // }}
+                           
                           />
                         </Form.Item>
+                    )} */}
 
 
+{!isMultipleDates ? (
+        <Form.Item
+          label="Fecha Del Pago"
+          name="fecha"
+          rules={[{ required: true, message: 'Por favor ingrese la Fecha del Pago!' }]}
+        >
+          <DatePicker format="YYYY-MM-DD" />
+        </Form.Item>
+      ) : (
+        <>
+          <Form.Item
+            label="Seleccionar Mes"
+            name="mes"
+            rules={[{ required: true, message: 'Por favor seleccione el mes!' }]}
+          >
+            <MonthPicker
+              format="YYYY-MM"
+              onChange={handleMonthChange}
+              value={selectedMonth}
+            />
+          </Form.Item>
+
+          {selectedMonth && (
+            <>
+              <Form.Item label="Seleccionar Fechas para Excluir">
+                <DatePicker
+                  format="YYYY-MM-DD"
+                  onChange={handleDateSelection}
+                  // disabledDate={disabledDate}
+                  disabledDate={(current) => current && current < moment().startOf('day')}
+                  open={isCalendarOpen}
+                />
+                <Button type="primary" onClick={toggleCalendar} style={{ marginTop: '10px' }}>
+                  {isCalendarOpen ? 'Cerrar Calendario' : 'Abrir Calendario'}
+                </Button>
+              </Form.Item>
+
+              <Form.Item>
+                <p>Días excluidos seleccionados:</p>
+                <List
+                  dataSource={excludedDates}
+                  renderItem={(date) => (
+                    <List.Item
+                      actions={[
+                        <Button
+                          type="link"
+                          onClick={() => handleRemoveDate(date)}
+                          key="remove"
+                        >
+                          Eliminar
+                        </Button>,
+                      ]}
+                    >
+                      {date}
+                    </List.Item>
+                  )}
+                />
+              </Form.Item>
+            </>
+          )}
+        </>
+      )}
 
 
-
-
-                    )}
-
-            <div>
+            {/* <div>
             <div style={{ marginBottom: "20px", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button type="button" onClick={togglePagos} style={{color:'white', backgroundColor: mostrarPagados ? 'orange' : 'darkcyan', borderRadius:'5px', border:'none', fontSize:'18px'}}>
                 {mostrarPagados ? "Mostrar Dias No Pagados" : "Mostrar Dias Pagados"}
@@ -482,7 +570,7 @@ const Arrendatarios = () => {
                 )
               )}
             </div>
-            </div>
+            </div> */}
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
                     <Button 
