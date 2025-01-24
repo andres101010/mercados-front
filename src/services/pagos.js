@@ -1,7 +1,7 @@
 import axios from "axios";
 // import moment from "moment";
-// const url = import.meta.env.VITE_URL_LOCAL;
-const url = import.meta.env.VITE_URL_SERVICE;
+const url = import.meta.env.VITE_URL_LOCAL;
+// const url = import.meta.env.VITE_URL_SERVICE;
 
 
 export const getPagos = async (id,fechaInicial,fechaFinal,idLocal, idMercado) => {

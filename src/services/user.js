@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const url = import.meta.env.VITE_URL_LOCAL;
-const url = import.meta.env.VITE_URL_SERVICE;
+const url = import.meta.env.VITE_URL_LOCAL;
+// const url = import.meta.env.VITE_URL_SERVICE;
 
 
 export const findUsers = async () => {
@@ -15,7 +15,8 @@ export const createUser = async (body) => {
 }
 
 export const editUser = async (body, id) => {
-    console.log("idddddddd", id);
-    const res = await axios.put(`${url}/editUser/${id}`, body, {withCredentials: true});
+    const res = await axios.put(`${url}/editUser/${id}`, body, { headers: {
+        'Content-Type': 'multipart/form-data', // Asegura el encabezado para FormData
+    }, withCredentials: true});
     return res;
 }

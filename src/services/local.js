@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const url = import.meta.env.VITE_URL_LOCAL;
-const url = import.meta.env.VITE_URL_SERVICE;
+const url = import.meta.env.VITE_URL_LOCAL;
+// const url = import.meta.env.VITE_URL_SERVICE;
 
 
 export const createLocal = async (place) => {
@@ -20,8 +20,7 @@ export const editLocal = async (body,id) => {
 }
 
 export const createObservacion = async (id,body) => {
-    console.log("body", body);
-    console.log("id", id);
+    
     const result = await axios.post(`${url}/createObservacion/${id}`,body, {withCredentials : true})
     return result;
 }
