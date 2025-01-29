@@ -39,7 +39,8 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
         textHeader: {
             fontSize: 22,
             color: "darkcyan",
-            textAlign: "center"
+            textAlign: "center",
+            marginBottom: "10px",
         },
         headerArrendatario: {
             fontSize: 22,
@@ -73,12 +74,64 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
 
         }
     });
+    const stylesTable = StyleSheet.create({
+        table: {
+          display: "table",
+          width: "auto",
+          borderStyle: "solid",
+          borderWidth: 1,
+          borderColor: "#bdbdbd",
+          margin: 10,
+        },
+        tableRow: {
+          flexDirection: "row",
+        },
+        tableCellHeader: {
+          backgroundColor: "#f2f2f2",
+          borderWidth: 1,
+          borderColor: "#bdbdbd",
+          padding: 5,
+          fontWeight: "bold",
+          flex: 1,
+          textAlign: "center",
+        },
+        tableCell: {
+          borderWidth: 1,
+          borderColor: "#bdbdbd",
+          padding: 5,
+          flex: 1,
+          textAlign: "center",
+        },
+        tableTitle: {
+          fontSize: 14,
+          marginBottom: 10,
+          textAlign: "center",
+          fontWeight: "bold",
+        },
+      });
     let nameMercado;
     dataPdf.length > 0 ? dataPdf?.map((row)=> nameMercado = row.mercado.nombre) : dataPdfPago.length > 0 ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : nameMercado = "Este Mercado No Tiene Puestros Asignados"
     
+    let dias ;
+    let año;
+    let mes;
+    dataPdfContrato.map((row)=> {
+        dias = row.contrato.fechaDeContrato?.split("-")[2]
+        año = row.contrato.fechaDeContrato?.split("-")[0]
+        mes = row.contrato.fechaDeContrato?.split("-")[1] - 1
+    })
+
+    const meses = [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", 
+        "Junio", "Julio", "Agosto", "Septiembre", 
+        "Octubre", "Noviembre", "Diciembre"
+    ];
     // console.log("dataPdfPago", dataPdfPago);
     // console.log("dataPdfCONTRATO", dataPdfContrato);
-
+    // console.log("dias", dias);
+    // console.log("año", año);
+    // console.log("mes", mes);
+    // console.log("meses", meses[mes]);
     return (
        
         <Document>
@@ -86,11 +139,13 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
                     <View style={styles.sectionHeader}>
                         {
                             dataPdf.length > 0 ? <Text style={styles.header}>Reporte De Mercados</Text> : dataPdfPago.length > 0 ?
-                            <Text style={styles.header}>Reporte De Pagos</Text> : dataPdfContrato.length > 0 ? <Text style={styles.header}>Contrato</Text> : null
+                            <Text style={styles.header}>Reporte De Pagos</Text> : dataPdfContrato.length > 0 ? <Text style={styles.header}>Acta De Entrega De Puesto De Venta</Text> : null
 
                         }
                         
-                        <Text style={styles.p}>El Gobierno Autonomo Municipal de Tarija - Cercado tiene la jurisdiccion de designar en calidad de arriendo, los puestos de Cada mercado de la provincia cercado en la ciudada de Tarija, manteniendo el orden y el uso adecuado de los puestos dedicados al comercio.</Text>
+                        <Text style={styles.p}>GOBIERNO AUTONOMO MUNICIPAL DE TARIJA</Text>
+                        <Text style={styles.p}>Direccion de Orden Y seguridad Ciudadana</Text>
+                        <Text style={styles.p}>Unidad Tecnica De Mercados Municipales</Text>
                     </View>
                     
                     <Text style={styles.textHeader}>
@@ -105,10 +160,11 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
                             <Text style={styles.headerArrendatario}>
                                     {'Pago: '}
                             </Text>
-                            : dataPdfContrato.length > 0 ?
-                            <Text style={styles.headerArrendatario}>
-                                    {'Acta De Entrega '}
-                            </Text> : null
+                            // : dataPdfContrato.length > 0 ?
+                            // <Text style={styles.headerArrendatario}>
+                            //         {'Acta De Entrega '}
+                            // </Text> 
+                            : null
                     }
             {
                  dataPdf.length > 0 ?  dataPdf.map((row, i) => (
@@ -212,56 +268,44 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
                 return (
                     <View style={styles.sectionContrato} key={row.id}>
                         
+                      
                         <Text style={styles.text}>
-                        {`Por medio del presente documento, el Entregante se compromete a realizar el alquiler del puesto ubicado en ${row.contrato.mercado.direccion} al Receptor :${row.contrato.arrendatario.name}${row.contrato.arrendatario.lastName}, en las condiciones descritas a continuación, y ambas partes acuerdan los términos relacionados con el traspaso de dicho puesto.`}
+                        {`A los ${dias} dias del mes de ${meses[mes]} de ${año} la DIRECCION - ADMINISTRACION DE MERCADOS MUNICIPALES en el marco de lo estipulado por el Articulo 11°,Paragrafo IV del REGLAMENTO DE ORGANIZACION  Y FUNCIONAMIENTO DE MERCADO MUNICIPALES, REALIZA LA ENTREGA DEL PUESTO DE VENTA al Señor/a ${row.contrato.arrendatario.name}${row.contrato.arrendatario.lastName}. Portador de la cedula de Identidad N° ${row.contrato.arrendatario.cedula} de acuerdo a las siguentes caracteristicas: `}
                         </Text>
 
-                        <Text style={styles.headerContrato}>
-                            {`Descripción del Inmueble`}
-                        </Text>
-                        <Text style={styles.text}>{`DIRECCION: ${row.contrato.mercado.direccion}`}</Text>
-                        <Text style={styles.text}>
-                            {`TIPO DE INMUEBLE: Puesto`}
-                        </Text>
-                        <Text style={styles.text}>
-                        {`ACCESORIOS INCLUIDOS: Unicamente EL Espacio`}
-                        </Text>
-                        <Text style={styles.text}>
-                        {`SERVICIOS CONECTADOS: Agua Y Luz`}
-                        </Text>
-                        <Text style={styles.text}>
-                        {`PUESTO N°: ${row.contrato.mercado.local}`}
-                        </Text>
-                        <Text style={styles.text}>
-                        {`FECHA DE CONTRATO: ${row.contrato.fechaDeContrato}`}
-                        </Text>
-                        <Text style={styles.headerContrato}>
-                            {`Informacion Del Arrendatario`}
-                        </Text>
-                        <Text style={styles.text}>
-                            {`NOMBRE: ${row.contrato.arrendatario.name}${row.contrato.arrendatario.lastName}`}
-                        </Text>
-                        <Text style={styles.text}>
-                            {`CARNET: ${row.contrato.arrendatario.cedula}`}
-                        </Text>
-                        <Text style={styles.text}>
-                            {`TELEFONO: ${row.contrato.arrendatario.phone}`}
-                        </Text>
-                        <Text style={styles.text}>
-                            {`DIRECCION: ${row.contrato.arrendatario.address}`}
+                        <View style={stylesTable.table}>
+                        {/* Encabezado de la tabla */}
+                        <View style={stylesTable.tableRow}>
+                        <Text style={stylesTable.tableCellHeader}>Numero De Puesto</Text>
+                        <Text style={stylesTable.tableCellHeader}>Sector(rubro)</Text>
+                        <Text style={stylesTable.tableCellHeader}>Monto Previsto(diario)</Text>
+                        <Text style={stylesTable.tableCellHeader}>Monto Previsto(mensual)</Text>
+                        <Text style={stylesTable.tableCellHeader}>Agua</Text>
+                        <Text style={stylesTable.tableCellHeader}>Luz</Text>
+                        </View>
+                        {/* Filas de la tabla */}
+                        {
+                            dataPdfContrato.map((row,i)=>(
+                                <View style={stylesTable.tableRow} key={i}>
+                                   <Text style={stylesTable.tableCell}>{row.contrato.number}</Text>
+                                   <Text style={stylesTable.tableCell}>{row.contrato.arrendatario.rubro}</Text>
+                                   <Text style={stylesTable.tableCell}> {row.contrato.pago?.montoPorDia != null ? `${row.contrato.pago.montoPorDia} Bs` : "Aun No Tiene Registros Se Pago"}</Text>
+                                   <Text style={stylesTable.tableCell}>-------</Text>
+                                   <Text style={stylesTable.tableCell}>Si</Text>
+                                   <Text style={stylesTable.tableCell}>Si</Text>
+                                </View>
+                            ))
+                        }
+                       
+                    </View>
 
+                        <Text style={styles.text}>
+                            {`De igual manera el/a Sr/a ${row.contrato.arrendatario.name}${row.contrato.arrendatario.lastName}, manifienta su compromiso de Brindar estricto cumplimiento a lo determinado por el REGLAMENTO DE ORGANIZACION Y FUNCIONAMIENTO DE MERCADOS MUNICIPALES y demas normativas legal conexa, como asi mismo a cumplir con todas y cada una de las obligaciones establecidas por la Direccion De Mercados y el Gobierno Autonomo Municipal de Tarija, requisitos fundamentales para asumir la titularidad Formal de un puesto de ventas.En caso de incimplimiento por parte del Titular , el Gobierno Autonomo Municipal de Tarija, mediante la direccion de Mercados y sus brazos operativos impondra las sanciones determinadas en la normativa legal vigente y para tal efecto.`}
                         </Text>
                         <Text style={styles.text}>
-                            {`RUBRO: ${row.contrato.arrendatario.rubro}`}
-
+                            {`ART. N°6 Numeral 32: Titular del Puesto; Es la persona que realiza una actividad economica en un puesto de venta en el interior de los mercados municipales cuyo nombre  se encuentra inscrito, en el registro de actividades econoimicas  de la Direccion de ingresos. La titularidad de un Puesto en ningun caso significa significa ceder el derecho propietario del mismo (corresponde solo al derecho de uso en tanto cumpla con sus obligaciones).`}
                         </Text>
-
-                         <Text style={styles.headerContrato}>
-                            {`Declaracion De Conformidad`}
-                        </Text>
-                        <Text style={styles.text}>
-                            {`Ambas partes manifiestan su conformidad con las condiciones descritas y aceptan los términos establecidos en este documento. Las partes firman el presente compromiso en dos ejemplares de igual tenor, quedando cada una con una copia.`}
-                        </Text>
+                      
 
                          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: '30px' }}>
                         {/* Columna de Arrendatario */}
@@ -306,13 +350,13 @@ const PdfRenderer = () => {
             const noIncludesContrato = response.data.every(row => !row.contrato); 
             if (JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesContrato) {
                 setDataPdf(response.data);
-                console.log("entroo 1111");
+                // console.log("entroo 1111");
             }else if(JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesContrato){
                 setDataPdfPago(response.data)
-                console.log("entrooo 2222");
+                // console.log("entrooo 2222");
             }else{
                 setDataPdfContrato(response.data)
-                console.log("entroo3333");
+                // console.log("entroo3333");
             }
         } catch (error) {
             console.log("error", error);
@@ -357,7 +401,7 @@ const PdfRenderer = () => {
         };
     
         document.body.appendChild(iframe);
-    }, [dataPdf, dataPdfPago]);
+    }, [dataPdf, dataPdfPago, dataPdfContrato]);
 
     return (
         <div style={{ padding: "20px" }}>

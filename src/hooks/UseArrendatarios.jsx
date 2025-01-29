@@ -17,25 +17,25 @@ const UseArrendatarios = () => {
     const [valueInput, setValueInput] = useState(null);
 
 
+    const [selectedMonth, setSelectedMonth] = useState(null);
+    const [excludedDates, setExcludedDates] = useState([]);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+
     const togglePagos = () => {
         setMostrarPagados((prev) => !prev);
     };
 
 
     const handleShowModalPago = async (location, id) => {
-      console.log("click");
-      console.log("row", location);
-      console.log("row.id", id);
       setCurrentLocation({ ...location, id })
-      
-        
       setShowModaPago(true); 
      
     }
     
 
     const showModal = () => {
-        console.log("click modal");
+        
         setIsModalVisible(true);
     };
 
@@ -50,6 +50,9 @@ const UseArrendatarios = () => {
         setShowModaPago(false)
         setPagos([])
         setWeekOffset(0)
+        setExcludedDates([]);
+        setIsMultipleDates(false);
+        setSelectedMonth(null)
     };
 
     
@@ -85,7 +88,15 @@ const UseArrendatarios = () => {
     setWeekOffset,
 
     valueInput,
-    setValueInput
+    setValueInput,
+
+
+    selectedMonth,
+    setSelectedMonth,
+    excludedDates,
+    setExcludedDates,
+    isCalendarOpen,
+    setIsCalendarOpen     
   }
     
   

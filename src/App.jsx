@@ -19,6 +19,7 @@ import ProtectedRoute from './component/ProtectedRoute';
 import Perfil from './pages/Perfil';
 import PdfRenderer from './component/PdfRenderer';
 import Tickets from './pages/Tickets';
+import Historial from './pages/Historial';
 // import * as jwtDecode from 'jwt-decode';
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
             <Route path="/perfil" element={<Perfil />} />
             <Route path="/:place/pdf" element={<PdfRenderer />} />
             <Route path="/tickets" element={<Tickets />} />
+            <Route path="/historial" element={<Historial />} />
           </Route>
         </Routes>
       </BrowserRouter>

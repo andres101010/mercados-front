@@ -38,7 +38,7 @@ const Puestos = () => {
     showModalObservacion,
     openModalObservacion,
     idpuesto,
-    setIdpuesto,
+    // setIdpuesto,
     observationForm
 
   } = UsePuestos();
@@ -433,7 +433,7 @@ const Puestos = () => {
                           <th>Estado</th>
                           <th>Fecha de Contrato</th>
                           <th>Rubro</th>
-                          <th>Contrato</th>
+                          <th>Acta</th>
                           <th>Desiganar/reset</th>
                           <th>Agregar Observaciones</th>
                           <th>Ver Observaciones</th>

@@ -128,6 +128,10 @@ const Sidebar = (props) => {
                   <Link to="/tickets"><i className="fa fa-ticket"></i>
                   Tickets</Link>
                 </li>
+                <li className={activeIndex === 7 ? "active" : ""} onClick={() => handleClick(7)} style={{display: user.level == 2 ? "none" : "block"}}>
+                  <Link to="/historial"><i className="fa fa-history"></i>
+                  Historial</Link>
+                </li>
               </ul>
             </div>
           </div>

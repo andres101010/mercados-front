@@ -1,14 +1,14 @@
 import { Link, useParams } from 'react-router-dom';
 import { getAllArrendatarios, createArrendatario } from '../services/arrendatario';
 import UseArrendatarios from '../hooks/UseArrendatarios';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { Modal, Form, Input, Button, DatePicker,Checkbox, List  } from 'antd';
 import Swal from 'sweetalert2';
 import { getPagos, createPago } from '../services/pagos';
 import moment from "moment";
 
 
-const { MonthPicker, RangePicker } = DatePicker;
+const { MonthPicker } = DatePicker;
 
 const Arrendatarios = () => {
   const [form] = Form.useForm();
@@ -38,7 +38,14 @@ const Arrendatarios = () => {
             weekOffset,
             setWeekOffset,
             valueInput,
-            setValueInput
+            setValueInput,
+
+            selectedMonth,
+            setSelectedMonth,
+            excludedDates,
+            setExcludedDates,
+            isCalendarOpen,
+            setIsCalendarOpen           
     } = UseArrendatarios();
     const { place } = useParams();
 
@@ -48,7 +55,7 @@ const Arrendatarios = () => {
   //   form.resetFields(['fecha', 'fechas']);
   // };
 
-
+   
     const getArrendatarios = async (place) => {
         try {
             const result = await getAllArrendatarios(place);
@@ -148,14 +155,14 @@ const Arrendatarios = () => {
     //   // Reemplazar fechas por el rango generado
     //   values.fechas = allDates;
     // }
-
+      //  console.log("value", values);
        const body = {
         arrendatario:currentLocation._id,
         local: currentLocation.local?.map((row)=>row._id),
         // diasPagados: values.fechas ? values.fechas : [values.fecha.format('YYYY-MM-DD')],
         monto: values.monto,
         excludedDates : excludedDates,
-        mes: values.mes
+        mes: values.mes || values.fecha
        }
       const res = await createPago(body)
       const respSuccess = res.data.message || 'Pago Exitoso.'
@@ -173,13 +180,15 @@ const Arrendatarios = () => {
       setIsCalendarOpen(false)
     } catch (error) {
       console.log("Error: ", error);
-      const errorMessage = error?.response?.data?.error || 'Ocurrió un error al crear el Pago.';
+      const errorMessage = error?.response?.data?.message || 'Ocurrió un error al crear el Pago.';
       Swal.fire({
         icon: 'error',
         title: 'Error',
         text: errorMessage,
         confirmButtonText: 'Aceptar'
     });
+    form.resetFields();
+    
     }
   };
 
@@ -188,9 +197,7 @@ const Arrendatarios = () => {
     setValueInput(e.target.value)
   }
 
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [excludedDates, setExcludedDates] = useState([]);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  
   const handleCheckboxChange = (e) => {
     setIsMultipleDates(e.target.checked);
     // Reset selected month and excluded dates when toggling
@@ -222,19 +229,19 @@ const Arrendatarios = () => {
     setExcludedDates((prev) => prev.filter((date) => date !== dateToRemove));
   };
 
-  const disabledDate = (current) => {
-    // Disable dates outside the selected month
-    return (
-      !current ||
-      current.month() !== selectedMonth?.month() ||
-      current.year() !== selectedMonth?.year()
-    );
-  };
+  // const disabledDate = (current) => {
+  //   // Disable dates outside the selected month
+  //   return (
+  //     !current ||
+  //     current.month() !== selectedMonth?.month() ||
+  //     current.year() !== selectedMonth?.year()
+  //   );
+  // };
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
   };
-
+ 
   return (
     <div>
           <Modal
@@ -408,28 +415,7 @@ const Arrendatarios = () => {
                     </Checkbox>
                   </Form.Item>
 
-                  {/* {!isMultipleDates ? (
-                      <Form.Item
-                        label="Fecha Del Pago"
-                        name="fecha"
-                        rules={[{ required: true, message: 'Por favor ingrese la Fecha del Pago!' }]}
-                      >
-                        <DatePicker format="YYYY-MM-DD" />
-                      </Form.Item>
-                    ) : (
-                     
-                      <Form.Item
-                          label="Fechas Del Pago"
-                          name="fechas"
-                          rules={[{ required: true, message: 'Por favor ingrese las Fechas del Pago!' }]}
-                        >
-                          <DatePicker.RangePicker
-                            format="YYYY-MM-DD"
-                           
-                          />
-                        </Form.Item>
-                    )} */}
-
+                
 
 {!isMultipleDates ? (
         <Form.Item
@@ -495,7 +481,7 @@ const Arrendatarios = () => {
       )}
 
 
-            {/* <div>
+            <div>
             <div style={{ marginBottom: "20px", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button type="button" onClick={togglePagos} style={{color:'white', backgroundColor: mostrarPagados ? 'orange' : 'darkcyan', borderRadius:'5px', border:'none', fontSize:'18px'}}>
                 {mostrarPagados ? "Mostrar Dias No Pagados" : "Mostrar Dias Pagados"}
@@ -570,7 +556,7 @@ const Arrendatarios = () => {
                 )
               )}
             </div>
-            </div> */}
+            </div>
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
                     <Button 
