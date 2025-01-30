@@ -1044,6 +1044,14 @@
     white-space: nowrap;
     font-weight: bold;
   }
+  .pageResponsive{
+    height: 754px;
+  }
+  .responsive-div{
+    flex-direction: column !important;
+    align-items: center; 
+    gap: 30px; 
+  }
 }
 
 
