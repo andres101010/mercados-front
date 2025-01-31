@@ -180,7 +180,7 @@ const Arrendatarios = () => {
       setIsCalendarOpen(false)
     } catch (error) {
       console.log("Error: ", error);
-      const errorMessage = error?.response?.data?.message || 'Ocurrió un error al crear el Pago.';
+      const errorMessage = error?.response?.data?.error || 'Ocurrió un error al crear el Pago.';
       Swal.fire({
         icon: 'error',
         title: 'Error',
