@@ -4,7 +4,87 @@ import { PDFDownloadLink, PDFViewer, Page, Text, View, Document, StyleSheet, pdf
 import { useParams } from "react-router-dom";
 import { getInfoPdf } from "../services/pdf";
 
-const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
+
+
+
+const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones, dataPdfPagoTodo}) => {
+
+    
+    const generarRangoMeses = (fechaInicio, resumenPagos) => {
+        console.log("resumenPagos",resumenPagos)
+        
+        const mesesDisponibles = resumenPagos
+          .map(([mes]) => mes) // Extraemos solo los nombres de los meses
+          .sort((a, b) => {
+            const [mesA, añoA] = a.split('-');
+            const [mesB, añoB] = b.split('-');
+      
+            const fechaA = new Date(`${añoA}-${mesANumero(mesA)}-01`);
+            const fechaB = new Date(`${añoB}-${mesANumero(mesB)}-01`);
+      
+            return fechaA - fechaB;
+          });
+      
+        // console.log("Meses Disponibles Ordenados:", mesesDisponibles);
+      
+        const inicio = new Date(fechaInicio);
+        // const fin = new Date(`${mesesDisponibles.at(-1).split('-')[1]}-${mesANumero(mesesDisponibles.at(-1).split('-')[0])}-01`);
+      
+        const [mesTexto, año] = mesesDisponibles.at(-1).split('-');
+        const mes = mesANumero(mesTexto); // Suponiendo que devuelve el número del mes (Ej: Marzo → 3)
+        const fin = new Date(año, mes - 1, 1); // mes - 1 porque en JS enero = 0, febrero = 1, marzo = 2...
+
+        // console.log("Fecha Fin:", fin);
+
+        fin.setMonth(fin.getMonth() + 1, 0);
+      
+        let meses = [];
+        let actual = new Date(inicio);
+
+        while (actual <= fin) {  
+        const nombreMes = actual.toLocaleString('es-ES', { month: 'long' });
+        const año = actual.getFullYear();
+        const key = `${nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)}-${año}`;
+
+        meses.push(key);
+        actual.setMonth(actual.getMonth() + 1); 
+        }
+
+        return meses;
+    };
+
+   
+    
+
+      const mesANumero = (mes) => {
+        const meses = {
+          "Enero": "01", "Febrero": "02", "Marzo": "03", "Abril": "04",
+          "Mayo": "05", "Junio": "06", "Julio": "07", "Agosto": "08",
+          "Septiembre": "09", "Octubre": "10", "Noviembre": "11", "Diciembre": "12"
+        };
+        return meses[mes];
+      };
+      
+      let mesesPago;
+
+    if (dataPdfPagoTodo.length > 0) {
+        const { fechaContrato, resumenPagos } = dataPdfPagoTodo[0];
+        mesesPago = generarRangoMeses(fechaContrato, resumenPagos);
+      
+        // Crear una nueva estructura con objetos
+        mesesPago = mesesPago.map((mes) => {
+            const pagoEncontrado = resumenPagos.find(r => r[0] === mes); // Buscar coincidencia
+    
+            return {
+                mes, 
+                pago: pagoEncontrado ? pagoEncontrado[1] : null // Si hay pago, lo agrega; si no, null
+            };
+        });
+    
+        console.log("mesesPagos", mesesPago);
+    }
+    
+
     const styles = StyleSheet.create({
         page: {
             flexDirection: "column",
@@ -24,23 +104,27 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
         header: {
             fontSize: 28,
             marginBottom: 10,
-            color: "darkcyan",
+            marginTop: 10,
+            color: "black",
             fontWeight:"bold",
         },
         text: {
-            fontSize: 15,
-             color:"darkcyan",
-             textAlign:"center"
+            fontSize: 12,
+             color:"black",
+             textAlign:"center",
         },
         p: {
             fontSize: 12,
-            color: "darkgray",
+            color: "#36454F",
+
         },
         textHeader: {
             fontSize: 22,
-            color: "darkcyan",
+            color: "black",
             textAlign: "center",
-            marginBottom: "10px",
+            marginBottom: "5px",
+            fontWeight:"bold",
+
         },
         headerArrendatario: {
             fontSize: 22,
@@ -72,6 +156,21 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
             color:"darkgray",
             textAlign: "center"
 
+        },
+        headerObs:{
+            fontSize:20,
+            margin: 15,
+            color:"darkcyan",
+            textAlign: "center",
+            fontWeight:"bold",
+
+        },
+        textObs:{
+            fontSize: 15,
+             color:"#36454F",
+             textAlign:"center",
+             marginTop: 10,
+             fontWeight:"bold",
         }
     });
     const stylesTable = StyleSheet.create({
@@ -110,7 +209,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
         },
       });
     let nameMercado;
-    dataPdf.length > 0 ? dataPdf?.map((row)=> nameMercado = row.mercado.nombre) : dataPdfPago.length > 0 ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : nameMercado = "Este Mercado No Tiene Puestros Asignados"
+    dataPdf.length > 0 ? dataPdf?.map((row)=> nameMercado = row.mercado.nombre) : dataPdfPago.length > 0 ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : dataPdfObservaciones.length > 0 ? dataPdfObservaciones.map((row)=> nameMercado = row.mercado.nombre) : nameMercado = "Este Mercado No Tiene Puestros Asignados"
     
     let dias ;
     let año;
@@ -137,20 +236,27 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
         <Document>
         <Page size="A4" style={styles.page}>
                     <View style={styles.sectionHeader}>
-                        {
-                            dataPdf.length > 0 ? <Text style={styles.header}>Reporte De Mercados</Text> : dataPdfPago.length > 0 ?
-                            <Text style={styles.header}>Reporte De Pagos</Text> : dataPdfContrato.length > 0 ? <Text style={styles.header}>Acta De Entrega De Puesto De Venta</Text> : null
-
-                        }
-                        
                         <Text style={styles.p}>GOBIERNO AUTONOMO MUNICIPAL DE TARIJA</Text>
                         <Text style={styles.p}>Direccion de Orden Y seguridad Ciudadana</Text>
                         <Text style={styles.p}>Unidad Tecnica De Mercados Municipales</Text>
+                        {
+                            dataPdf.length > 0 ? <Text style={styles.header}>Reporte De Mercados</Text> : dataPdfPago.length > 0 ?
+                            <Text style={styles.header}>Reporte De Pagos</Text> : dataPdfContrato.length > 0 ? <Text style={styles.header}>Acta De Entrega De Puesto De Venta</Text> : 
+                            dataPdfObservaciones.length > 0 ? <Text style={styles.header}>Reporte De Observaciones</Text> : dataPdfPagoTodo.length > 0 ? <Text style={styles.header}>Reporte De Pago Anual</Text> : null
+
+                        }
+                        
+                        
                     </View>
-                    
+                    {
+                        dataPdfPagoTodo.length > 0 ?
+                        null
+                        :
                     <Text style={styles.textHeader}>
                             {`Mercado: ${nameMercado}`}
                     </Text>
+
+                    }
                     {
                          dataPdf.length > 0 ? 
                             <Text style={styles.headerArrendatario}>
@@ -311,23 +417,111 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato}) => {
                         {/* Columna de Arrendatario */}
                         <View style={{ alignItems: 'center' }}>
                             <Text style={{ textAlign: 'center' }}>{`----------`}</Text>
-                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Firma`}</Text>
-                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Arrendatario`}</Text>
+                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Recibi Conforme`}</Text>
+                            <Text style={{ fontSize: '10px', textAlign: 'center', marginTop:'5px' }}>{`Nombre___________________`}</Text>
+                            <Text style={{ fontSize: '10px', textAlign: 'center', marginTop:'5px' }}>{`CI___________________`}</Text>
                         </View>
 
                         {/* Columna de Arrendado */}
                         <View style={{ alignItems: 'center' }}>
                             <Text style={{ textAlign: 'center' }}>{`----------`}</Text>
-                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Firma`}</Text>
-                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Arrendado`}</Text>
+                            <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Entregue Conforme`}</Text>
+                            {/* <Text style={{ fontSize: '15px', textAlign: 'center' }}>{`Arrendado`}</Text> */}
+                            <Text style={{ fontSize: '10px', textAlign: 'center', marginTop:'5px' }}>{`Nombre___________________`}</Text>
+                            <Text style={{ fontSize: '10px', textAlign: 'center', marginTop:'5px' }}>{`CI___________________`}</Text>
                         </View>
                         </View>
 
                     </View>
                 )
             })
-            : null
+            : dataPdfObservaciones.length > 0 ?
+            dataPdfObservaciones.map((row)=>(
+                
+                    <View style={styles.sectionContrato} key={row.id}>
+                         <Text style={styles.headerObs}>
+                        {`Datos Personales `}
+                        </Text>
+                         <Text style={styles.textObs}>
+                        {`Nombre: ${row.arrendatario.name} ${row.arrendatario.lastName}`}
+                        </Text>
+                         <Text style={styles.textObs}>
+                        {`CI: ${row.arrendatario.cedula}`}
+                        </Text>
+                         <Text style={styles.textObs}>
+                        {`Direccion: ${row.arrendatario.address}`}
+                        </Text>
+                         <Text style={styles.textObs}>
+                        {`Telefono: ${row.arrendatario.phone}`}
+                        </Text>
+                        <Text style={styles.headerObs}>
+                        {`Rubro `}
+                        </Text>
+                        <Text style={styles.textObs}>
+                        {`${row.arrendatario.rubro}`}
+                        </Text>
+                        <Text style={styles.headerObs}>
+                        {`Local `}
+                        </Text>
+                        <Text style={styles.textObs}>
+                        {`N°: ${row.mercado.local}`}
+                        </Text>
+                        <Text style={styles.headerObs}>
+                        {`Observaciones `}
+                        </Text>
+                        <Text style={styles.textObs}>
+                        {`N° De Notificacion: ${row.observacion.numNotificacion}`}
+                        </Text>
+                        <Text style={styles.textObs}>
+                        {`Fecha: ${row.observacion.fecha}`}
+                        </Text>
+                        <Text style={styles.textObs}>
+                        {`Falta: ${row.observacion.falta}`}
+                        </Text>
+                        <Text style={styles.textObs}>
+                        {`OBSERVACION`}
+                        </Text>
+                        <Text style={styles.textObs}>
+                        {` ${row.observacion.observacion}`}
+                        </Text>
+                        
+                    </View>
+                
+            ))
+            : dataPdfPagoTodo.length > 0 ?
+              dataPdfPagoTodo.map((row,i)=>(
+            <View style={stylesTable.table} key={i}>
+                {/* Encabezado de la tabla */}
+                <View style={stylesTable.tableRow}>
+                        <Text style={stylesTable.tableCellHeader}>Año</Text>
+                        <Text style={stylesTable.tableCellHeader}>Dias Cont.</Text>
+                        <Text style={stylesTable.tableCellHeader}>Dias Pagados</Text>
+                        <Text style={stylesTable.tableCellHeader}>Dias Adeud.</Text>
+                        <Text style={stylesTable.tableCellHeader}>Deuda</Text>
+                        <Text style={stylesTable.tableCellHeader}>Deuda Anual</Text>
+                </View>
+
+                 {/* Filas de la tabla */}
+                 {
+                            mesesPago.map((row,i)=>(
+                                <View style={stylesTable.tableRow} key={i}>
+                                   <Text style={stylesTable.tableCell}>{row.mes}</Text>
+                                   <Text style={stylesTable.tableCell}>{row.pago?.diasTotales ? row.pago?.diasTotales : "Sin Registro de pago" }</Text>
+                                   <Text style={stylesTable.tableCell}>{row.pago?.diasPagados ? row.pago?.diasPagados : "0" }</Text>
+                                   <Text style={stylesTable.tableCell}>{row.pago?.diasAdeudados.dias ? row.pago?.diasAdeudados : "0" }</Text>
+                                   <Text style={stylesTable.tableCell}>{row.pago?.deudaMensual.dias ? row.pago?.deudaMensual : "-" }</Text>
+                                   <Text style={stylesTable.tableCell}>Si</Text>
+                                </View>
+                            ))
+                  }
+                       
+                
+              </View>
+              ))
+
+              : null
             }
+            
         </Page>
     </Document>
 
@@ -341,6 +535,8 @@ const PdfRenderer = () => {
     const [dataPdf, setDataPdf] = React.useState([])
     const [dataPdfPago, setDataPdfPago] = React.useState([])
     const [dataPdfContrato, setDataPdfContrato] = React.useState([])
+    const [dataPdfObservaciones, setDataPdfObservaciones] = React.useState([])
+    const [dataPdfPagoTodo, setDataPdfPagoTodo] = React.useState([])
     const { place } = useParams();
 
     const infoPdf = async () => {
@@ -348,15 +544,24 @@ const PdfRenderer = () => {
             const response = await getInfoPdf(place);
             const noIncludesPago = response.data.every(row => !row.pago); 
             const noIncludesContrato = response.data.every(row => !row.contrato); 
-            if (JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesContrato) {
+            const noIncludesObservaciones = response.data.every(row => !row.observacion); 
+            const noIncludesPagoTodo = response.data.every(row => !row.fechaContrato);  
+            if (JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesContrato && noIncludesObservaciones && noIncludesPagoTodo) {
                 setDataPdf(response.data);
-                // console.log("entroo 1111");
-            }else if(JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesContrato){
+                console.log("entroo 1111");
+            }else if(JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesContrato && noIncludesObservaciones && noIncludesPagoTodo) {
                 setDataPdfPago(response.data)
-                // console.log("entrooo 2222");
-            }else{
+                console.log("entrooo 2222");
+            }else if(JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesObservaciones && noIncludesPagoTodo){
                 setDataPdfContrato(response.data)
-                // console.log("entroo3333");
+                console.log("entroo3333");
+            }else if(JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesContrato && noIncludesPagoTodo) {
+                console.log("entroo444");
+
+                setDataPdfObservaciones(response.data)
+            }else{
+                console.log("entroooo 55555555555")
+                setDataPdfPagoTodo(response.data)
             }
         } catch (error) {
             console.log("error", error);
@@ -366,7 +571,7 @@ const PdfRenderer = () => {
         infoPdf()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
-    // console.log("aaaaa", dataPdfContrato);
+    console.log("dataPdfPagoTodo", dataPdfPagoTodo);
     // Función para manejar la impresión
     // const handlePrint = async () => {
     //     const blob = await pdf(<MyDocument />).toBlob(); // Genera un blob del PDF
@@ -387,7 +592,7 @@ const PdfRenderer = () => {
     // };
  
     const handlePrint = React.useCallback(async () => {
-        const blob = await pdf(<MyDocument dataPdf={dataPdf} dataPdfPago={dataPdfPago} dataPdfContrato={dataPdfContrato} />).toBlob();
+        const blob = await pdf(<MyDocument dataPdf={dataPdf} dataPdfPago={dataPdfPago} dataPdfContrato={dataPdfContrato} dataPdfObservaciones={dataPdfObservaciones} dataPdfPagoTodo={dataPdfPagoTodo} />).toBlob();
         const url = URL.createObjectURL(blob);
     
         const iframe = document.createElement("iframe");
@@ -401,7 +606,7 @@ const PdfRenderer = () => {
         };
     
         document.body.appendChild(iframe);
-    }, [dataPdf, dataPdfPago, dataPdfContrato]);
+    }, [dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones, dataPdfPagoTodo]);
 
     return (
         <div style={{ padding: "20px" }}>
@@ -415,13 +620,13 @@ const PdfRenderer = () => {
                     <h3>Vista Previa del PDF</h3>
                     {/* Vista previa del PDF */}
                     <PDFViewer style={{ width: "100%", height: "500px" }}>
-                        <MyDocument dataPdf={dataPdf} dataPdfPago={dataPdfPago} dataPdfContrato={dataPdfContrato}/>
+                        <MyDocument dataPdf={dataPdf} dataPdfPago={dataPdfPago} dataPdfContrato={dataPdfContrato} dataPdfObservaciones={dataPdfObservaciones} dataPdfPagoTodo={dataPdfPagoTodo}/>
                     </PDFViewer>
                 </div>
             )}
 
             {/* Botón para descargar */}
-            <PDFDownloadLink document={<MyDocument dataPdf={dataPdf}  dataPdfPago={dataPdfPago} dataPdfContrato={dataPdfContrato}/>} fileName="ejemplo-documento.pdf">
+            <PDFDownloadLink document={<MyDocument dataPdf={dataPdf}  dataPdfPago={dataPdfPago} dataPdfContrato={dataPdfContrato} dataPdfObservaciones={dataPdfObservaciones} dataPdfPagoTodo={dataPdfPagoTodo}/>} fileName="ejemplo-documento.pdf">
                 {({loading }) =>
                     loading ? "Cargando documento..." : <button style={{marginBottom: "10px" , color:'white', backgroundColor:'#17a2b8', textTransform: 'none !important', fontSize:'14px', padding: '.375rem .75rem', borderRadius:'3px', borderColor:'#17a2b8', border:'solid 1px transparent'}}>Descargar PDF</button>
                 }

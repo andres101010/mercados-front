@@ -71,7 +71,7 @@ const Puestos = () => {
   // console.log("puestossssssss", puestos);
   // console.log("arre", arrendatarios);
   // console.log("currentLocation", currentLocation);
-  // console.log("observaciones", observacion);
+  console.log("observaciones", observacion);
  
   const handleCreateLocal = async () => {
     try {
@@ -190,6 +190,7 @@ const Puestos = () => {
     setValueInput(e.target.value)
   }
   const dataObservacion = showModalObservacion ? puestos.find((row)=>row._id == idpuesto) : [];
+  console.log("dataObservacion",dataObservacion)
 
   const reset = async (id) => {
     try {
@@ -331,6 +332,22 @@ const Puestos = () => {
                     </Form.Item>
 
                     <Form.Item
+                      label="Falta"
+                      name="falta"
+                      rules={[{ required: true, message: 'Por favor ingrese Contenido!' }]}
+                    >
+                      <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Numero de Notificación"
+                      name="numDeNotificacion"
+                      rules={[{ required: true, message: 'Por favor ingrese Contenido!' }]}
+                    >
+                      <Input type='number'/>
+                    </Form.Item>
+
+                    <Form.Item
                       label="Observacion"
                       name="observacion"
                       rules={[{ required: true, message: 'Por favor ingrese Contenido!' }]}
@@ -363,9 +380,10 @@ const Puestos = () => {
                   dataObservacion.observaciones.map((row,i)=>(
                     <div key={i} style={{border:'solid 2px gray', textAlign:'center', margin:'2px', backgroundColor:'red', color:'white'}}>
                       <h3>{row.fecha}</h3>
-                      <h3>{row.observacion}</h3>
+                      <h3>{row.falta}</h3>
+                      <h3>{`Observacion: ${row.observacion ? row.observacion : "Sin Observaciones"}`}</h3>
                       <p style={{border:'solid 1px white', borderRadius:'50%', width:'35px', height:'30px',margin:'auto', backgroundColor:'white', marginBottom:'4px'}}><i className="fa fa-times text-danger"></i></p>
-
+                      <Link to={`/${row._id}observaciones/pdf`}> <button type="button" style={{backgroundColor: 'darkGray', color:"white",fontWeight:"bold", margin:'7px', borderRadius:'8px'}}>Imprimir</button></Link>
                     </div>
                   ))
                  : null

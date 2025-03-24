@@ -188,6 +188,11 @@ const Arrendatarios = () => {
         confirmButtonText: 'Aceptar'
     });
     form.resetFields();
+    handleOk(); 
+      setShowModaPago(false);
+      setExcludedDates([])
+      setSelectedMonth(null)
+      setIsCalendarOpen(false)
     
     }
   };
@@ -446,7 +451,8 @@ const Arrendatarios = () => {
                   format="YYYY-MM-DD"
                   onChange={handleDateSelection}
                   // disabledDate={disabledDate}
-                  disabledDate={(current) => current && current < moment().startOf('day')}
+                  // disabledDate={(current) => current && current < moment().startOf('day')}
+                  disabledDate={(current) => current && current < moment(pagos.fechaDeContrato, 'YYYY-MM-DD').startOf('day')}
                   open={isCalendarOpen}
                 />
                 <Button type="primary" onClick={toggleCalendar} style={{ marginTop: '10px' }}>
@@ -640,7 +646,8 @@ const Arrendatarios = () => {
                                                       <th>Puesto</th>
                                                       <th>Rubro</th>
                                                       <th>Pagar</th>
-                                                      <th>Imprimir Ultimo Reporte De Pago</th>
+                                                      <th>Ultimo Reporte De Pago</th>
+                                                      <th>Pago De Todo el Año</th>
       
                                                   </tr>
                                               </thead>
@@ -720,6 +727,10 @@ const Arrendatarios = () => {
                                                       </td>
                                                       <td>
                                                           <Link to={`/${row._id}pago/pdf`}> <button type="button" className="btn btn-info fa fa-file-pdf-o" disabled={row.local == 0} style={{backgroundColor:row.local == 0 ? 'gray' : null}}></button></Link>
+      
+                                                      </td>
+                                                      <td>
+                                                          <Link to={`/${row._id}todoElAño/pdf`}> <button type="button" className="btn btn-info fa fa-file-pdf-o" disabled={row.local == 0} style={{backgroundColor:row.local == 0 ? 'gray' : null}}></button></Link>
       
                                                       </td>
                                                         </tr>
