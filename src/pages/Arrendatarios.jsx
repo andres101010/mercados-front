@@ -45,17 +45,16 @@ const Arrendatarios = () => {
             excludedDates,
             setExcludedDates,
             isCalendarOpen,
-            setIsCalendarOpen           
+            setIsCalendarOpen,
+            
+            selectedPaymentDates,
+            setSelectedPaymentDates,
+
+            isCalendarOpen2,
+            setIsCalendarOpen2,
     } = UseArrendatarios();
     const { place } = useParams();
-
-  // const handleCheckboxChange = (e) => {
-  //   setIsMultipleDates(e.target.checked);
-  //   // Opcional: Resetear el campo de fecha al cambiar la opción
-  //   form.resetFields(['fecha', 'fechas']);
-  // };
-
-   
+ 
     const getArrendatarios = async (place) => {
         try {
             const result = await getAllArrendatarios(place);
@@ -137,29 +136,14 @@ const Arrendatarios = () => {
 
   const onFinishEdit = async (values) => {
     try {
-      
-       // Convertir las fechas en formato deseado antes de enviarlas
-    // if (values.fechas) {
-    //   const [startDate, endDate] = values.fechas;
-    //   const startDateString = startDate.format('YYYY-MM-DD'); // Convierte a string
-    //   const endDateString = endDate.format('YYYY-MM-DD');     // Convierte a string
-     
-    //   const allDates = [];
-    //   let currentDate = moment(startDateString).startOf('day');
-
-    //   while (currentDate.isSameOrBefore(moment(endDateString).startOf('day'))) {
-    //     allDates.push(currentDate.format('YYYY-MM-DD'));
-    //     currentDate.add(1, 'day');
-    //   }
-
-    //   // Reemplazar fechas por el rango generado
-    //   values.fechas = allDates;
-    // }
-      //  console.log("value", values);
+    
+       console.log("value", values);
+       console.log("selectedPaymentDates",selectedPaymentDates)
        const body = {
         arrendatario:currentLocation._id,
         local: currentLocation.local?.map((row)=>row._id),
         // diasPagados: values.fechas ? values.fechas : [values.fecha.format('YYYY-MM-DD')],
+        diasPagados: selectedPaymentDates,
         monto: values.monto,
         excludedDates : excludedDates,
         mes: values.mes || values.fecha
@@ -178,6 +162,7 @@ const Arrendatarios = () => {
       setExcludedDates([])
       setSelectedMonth(null)
       setIsCalendarOpen(false)
+      setSelectedPaymentDates([])
     } catch (error) {
       console.log("Error: ", error);
       const errorMessage = error?.response?.data?.error || 'Ocurrió un error al crear el Pago.';
@@ -234,17 +219,31 @@ const Arrendatarios = () => {
     setExcludedDates((prev) => prev.filter((date) => date !== dateToRemove));
   };
 
-  // const disabledDate = (current) => {
-  //   // Disable dates outside the selected month
-  //   return (
-  //     !current ||
-  //     current.month() !== selectedMonth?.month() ||
-  //     current.year() !== selectedMonth?.year()
-  //   );
-  // };
+
+
+  const handlePaymentDateSelection = (dates) => {
+    console.log("dates", dates)
+    if (!dates || dates.length === 0) return; // Evitar valores nulos
+
+    const formattedDates = [dates].map(date => date.format("YYYY-MM-DD"));
+
+    // Agregar solo las fechas nuevas, evitando duplicados
+    setSelectedPaymentDates((prevDates) => [
+      ...new Set([...prevDates, ...formattedDates])
+    ]);
+  };
+
+  
+  const handleRemovePaymentDate = (date) => {
+    setSelectedPaymentDates(selectedPaymentDates.filter(d => d !== date));
+  };
+  
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
+  };
+  const toggleCalendar2 = () => {
+    setIsCalendarOpen2(!isCalendarOpen2);
   };
  
   return (
@@ -481,6 +480,50 @@ const Arrendatarios = () => {
                   )}
                 />
               </Form.Item>
+
+
+                 {/* Seleccionar fechas a pagar */}
+    {/* <Form.Item label="Seleccionar Fechas a Pagar">
+      <DatePicker
+        format="YYYY-MM-DD"
+        onChange={handlePaymentDateSelection}
+        disabledDate={(current) => current && current < moment(pagos.fechaDeContrato, 'YYYY-MM-DD').startOf('day')}
+      />
+    </Form.Item> */}
+
+<Form.Item label="Seleccionar Fechas a Pagar">
+        <DatePicker
+          format="YYYY-MM-DD"
+          onChange={handlePaymentDateSelection}
+          disabledDate={(current) => current && current < moment(pagos.fechaDeContrato, "YYYY-MM-DD").startOf("day")}
+          open={isCalendarOpen2}
+        />
+         <Button type="primary" onClick={toggleCalendar2} style={{ marginTop: '10px' }}>
+                  {isCalendarOpen2 ? 'Cerrar Calendario' : 'Abrir Calendario'}
+         </Button>
+      </Form.Item>
+
+    <Form.Item>
+      <p>Días seleccionados para pagar:</p>
+
+        <List
+          dataSource={selectedPaymentDates}
+          renderItem={(date) => (
+            <List.Item 
+              key={date} 
+              actions={[
+                <Button key={`remove-${date}`} type="link" onClick={() => handleRemovePaymentDate(date)}>
+                  Eliminar
+                </Button>
+              ]}
+            >
+              {date}
+            </List.Item>
+          )}
+        />
+    </Form.Item>
+
+
             </>
           )}
         </>

@@ -20,6 +20,10 @@ const UseArrendatarios = () => {
     const [selectedMonth, setSelectedMonth] = useState(null);
     const [excludedDates, setExcludedDates] = useState([]);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    const [isCalendarOpen2, setIsCalendarOpen2] = useState(false);
+
+    const [selectedPaymentDates, setSelectedPaymentDates] = useState([]);
+
 
 
     const togglePagos = () => {
@@ -96,7 +100,13 @@ const UseArrendatarios = () => {
     excludedDates,
     setExcludedDates,
     isCalendarOpen,
-    setIsCalendarOpen     
+    setIsCalendarOpen,
+    
+    selectedPaymentDates,
+    setSelectedPaymentDates,
+
+    isCalendarOpen2,
+    setIsCalendarOpen2,
   }
     
   

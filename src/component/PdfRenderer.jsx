@@ -66,6 +66,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
       };
       
       let mesesPago;
+      let deudasPorAño;
 
     if (dataPdfPagoTodo.length > 0) {
         const { fechaContrato, resumenPagos } = dataPdfPagoTodo[0];
@@ -82,7 +83,45 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
         });
     
         console.log("mesesPagos", mesesPago);
+
+        // deudaAnual = mesesPago.reduce((acc,val)=>{
+        //     console.log("val", val.pago)
+        //     if(val.pago){
+        //         return acc + val.pago.deudaMensual;
+        //     } 
+        //     return acc
+        // },0)
+
+        // Extraemos los años únicos
+        deudasPorAño = mesesPago.reduce((acc, val) => {
+            const año = val.mes.split("-")[1]; // Extraemos el año del mes
+            if (!acc[año]) {
+                acc[año] = { deudaAnual: 0, meses: [] };
+            }
+            
+            // Agregamos el mes a la lista de meses
+            acc[año].meses.push(val);
+            
+            // Sumamos la deuda si hay pago registrado
+            if (val.pago) {
+                acc[año].deudaAnual += val.pago.deudaMensual;
+            }
+
+            return acc;
+        }, {});
+
+        dataPdfPagoTodo = Object.entries(deudasPorAño).map(([año, datos]) => ({
+            año,
+            deudaAnual: datos.deudaAnual,
+            meses: datos.meses
+        }));
     }
+
+    console.log("deudasPorAño", deudasPorAño)
+
+   
+
+    console.log("dataPdfPagoTodo",dataPdfPagoTodo)
     
 
     const styles = StyleSheet.create({
@@ -194,12 +233,30 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
           flex: 1,
           textAlign: "center",
         },
+        tableCellHeader2: {
+          backgroundColor: "#f2f2f2",
+          borderWidth: 1,
+          borderColor: "#bdbdbd",
+          padding: 5,
+          fontWeight: "bold",
+          flex: 1,
+          textAlign: "center",
+          fontSize: 14
+        },
         tableCell: {
           borderWidth: 1,
           borderColor: "#bdbdbd",
           padding: 5,
           flex: 1,
           textAlign: "center",
+        },
+        tableCell2: {
+          borderWidth: 1,
+          borderColor: "#bdbdbd",
+          padding: 5,
+          flex: 1,
+          textAlign: "center",
+          fontSize: 10,
         },
         tableTitle: {
           fontSize: 14,
@@ -493,27 +550,40 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
             <View style={stylesTable.table} key={i}>
                 {/* Encabezado de la tabla */}
                 <View style={stylesTable.tableRow}>
-                        <Text style={stylesTable.tableCellHeader}>Año</Text>
-                        <Text style={stylesTable.tableCellHeader}>Dias Cont.</Text>
-                        <Text style={stylesTable.tableCellHeader}>Dias Pagados</Text>
-                        <Text style={stylesTable.tableCellHeader}>Dias Adeud.</Text>
-                        <Text style={stylesTable.tableCellHeader}>Deuda</Text>
-                        <Text style={stylesTable.tableCellHeader}>Deuda Anual</Text>
+                        <Text style={stylesTable.tableCellHeader2}>Año</Text>
+                        <Text style={stylesTable.tableCellHeader2}>Dias Cont.</Text>
+                        <Text style={stylesTable.tableCellHeader2}>Dias Pagados</Text>
+                        <Text style={stylesTable.tableCellHeader2}>Dias Adeud.</Text>
+                        <Text style={stylesTable.tableCellHeader2}>Deuda</Text>
+                        <Text style={stylesTable.tableCellHeader2}>Deuda Anual</Text>
                 </View>
 
                  {/* Filas de la tabla */}
-                 {
+                 {/* {
                             mesesPago.map((row,i)=>(
                                 <View style={stylesTable.tableRow} key={i}>
-                                   <Text style={stylesTable.tableCell}>{row.mes}</Text>
-                                   <Text style={stylesTable.tableCell}>{row.pago?.diasTotales ? row.pago?.diasTotales : "Sin Registro de pago" }</Text>
-                                   <Text style={stylesTable.tableCell}>{row.pago?.diasPagados ? row.pago?.diasPagados : "0" }</Text>
-                                   <Text style={stylesTable.tableCell}>{row.pago?.diasAdeudados.dias ? row.pago?.diasAdeudados : "0" }</Text>
-                                   <Text style={stylesTable.tableCell}>{row.pago?.deudaMensual.dias ? row.pago?.deudaMensual : "-" }</Text>
-                                   <Text style={stylesTable.tableCell}>Si</Text>
+                                   <Text style={stylesTable.tableCell2}>{row.mes}</Text>
+                                   <Text style={stylesTable.tableCell2}>{row.pago?.diasTotales ? row.pago?.diasTotales : "Sin Registro de pago" }</Text>
+                                   <Text style={stylesTable.tableCell2}>{row.pago?.diasPagados ? row.pago?.diasPagados : "0" }</Text>
+                                   <Text style={stylesTable.tableCell2}>{row.pago?.diasAdeudados ? row.pago?.diasAdeudados : "0" }</Text>
+                                   <Text style={stylesTable.tableCell2}>{row.pago?.deudaMensual ? row.pago?.deudaMensual : "-" }</Text>
+                                   <Text style={stylesTable.tableCell2}>{'-'}</Text>
                                 </View>
                             ))
-                  }
+                  } */}
+
+                    {/* Filas de la tabla */}
+        {row.meses.map((mesData, j) => (
+            <View style={stylesTable.tableRow} key={j}>
+                {/* <Text style={stylesTable.tableCell2}>{row.año}</Text> */}
+                <Text style={stylesTable.tableCell2}>{mesData.mes}</Text>
+                <Text style={stylesTable.tableCell2}>{mesData.pago?.diasTotales || "Sin Registro de pago"}</Text>
+                <Text style={stylesTable.tableCell2}>{mesData.pago?.diasPagados || "0"}</Text>
+                <Text style={stylesTable.tableCell2}>{mesData.pago?.diasAdeudados || "0"}</Text>
+                <Text style={stylesTable.tableCell2}>{mesData.pago?.deudaMensual || "-"}</Text>
+                <Text style={stylesTable.tableCell2}>{j === row.meses.length - 1 ? row.deudaAnual : "-"}</Text>
+            </View>
+        ))}
                        
                 
               </View>
