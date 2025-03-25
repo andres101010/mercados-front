@@ -712,7 +712,7 @@ const Arrendatarios = () => {
                                                   {
                                                     data.length == 0 ?
                                                     (
-                                                        <tr><td colSpan={6}  style={{textAlign:'center'}} ><span style={{fontWeight:'bold'}}>No Hay Datos...</span></td></tr>
+                                                        <tr><td colSpan={8}  style={{textAlign:'center'}} ><span style={{fontWeight:'bold'}}>No Hay Datos...</span></td></tr>
                                                     )
                                                     :
                                                     (

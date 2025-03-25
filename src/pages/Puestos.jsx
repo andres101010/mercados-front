@@ -463,7 +463,7 @@ const Puestos = () => {
                         { data.length === 0 ?
                         (
                           <tr>
-                            <td colSpan="6" style={{textAlign:'center'}}><span>No Hay Datos</span></td>
+                            <td colSpan="9" style={{textAlign:'center'}}><span>No Hay Datos</span></td>
                             <td>
                                 <button type="button" className="btn btn-info fa fa-plus" onClick={() => handleCreateLocal(place) }></button>
                                 {/* <button type="button" className="btn btn-primary fa fa-pencil" onClick={() => handleEdit(location)}></button> */}
@@ -535,7 +535,7 @@ const Puestos = () => {
                               <td  data-label="Agre. Observac">
                                 <button type="button" className="btn btn-danger fa fa-file-pdf-o" onClick={()=>{showOpen(dato._id)}}></button>
                               </td>
-                              <td  data-label="Ver">
+                              <td  data-label="Ver" >
                                 <button type="button" className="btn btn-primary fa fa-arrow-right" onClick={()=>{openModalObservacion(dato._id)}} disabled={dato?.observaciones.length == 0}> {dato?.observaciones.length == 0 ? "Total 0" : `Total: ${dato?.observaciones?.length}`}</button>
                               </td>
                             </tr>
