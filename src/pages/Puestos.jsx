@@ -71,7 +71,7 @@ const Puestos = () => {
   // console.log("puestossssssss", puestos);
   // console.log("arre", arrendatarios);
   // console.log("currentLocation", currentLocation);
-  console.log("observaciones", observacion);
+  // console.log("observaciones", observacion);
  
   const handleCreateLocal = async () => {
     try {
@@ -99,7 +99,7 @@ const Puestos = () => {
 
 
   const onFinish = async (values) => {
-      console.log('Datos del formulario:', values);
+      // console.log('Datos del formulario:', values);
       try {
         await createObservacion(observacion, values)
         Swal.fire({
@@ -190,7 +190,7 @@ const Puestos = () => {
     setValueInput(e.target.value)
   }
   const dataObservacion = showModalObservacion ? puestos.find((row)=>row._id == idpuesto) : [];
-  console.log("dataObservacion",dataObservacion)
+  // console.log("dataObservacion",dataObservacion)
 
   const reset = async (id) => {
     try {

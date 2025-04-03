@@ -11,46 +11,46 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
 
     
     const generarRangoMeses = (fechaInicio, resumenPagos) => {
-        console.log("resumenPagos",resumenPagos)
-        
-        const mesesDisponibles = resumenPagos
-          .map(([mes]) => mes) // Extraemos solo los nombres de los meses
-          .sort((a, b) => {
-            const [mesA, añoA] = a.split('-');
-            const [mesB, añoB] = b.split('-');
-      
-            const fechaA = new Date(`${añoA}-${mesANumero(mesA)}-01`);
-            const fechaB = new Date(`${añoB}-${mesANumero(mesB)}-01`);
-      
-            return fechaA - fechaB;
-          });
-      
-        // console.log("Meses Disponibles Ordenados:", mesesDisponibles);
-      
-        const inicio = new Date(fechaInicio);
-        // const fin = new Date(`${mesesDisponibles.at(-1).split('-')[1]}-${mesANumero(mesesDisponibles.at(-1).split('-')[0])}-01`);
-      
-        const [mesTexto, año] = mesesDisponibles.at(-1).split('-');
-        const mes = mesANumero(mesTexto); // Suponiendo que devuelve el número del mes (Ej: Marzo → 3)
-        const fin = new Date(año, mes - 1, 1); // mes - 1 porque en JS enero = 0, febrero = 1, marzo = 2...
-
-        // console.log("Fecha Fin:", fin);
-
-        fin.setMonth(fin.getMonth() + 1, 0);
-      
-        let meses = [];
-        let actual = new Date(inicio);
-
-        while (actual <= fin) {  
-        const nombreMes = actual.toLocaleString('es-ES', { month: 'long' });
-        const año = actual.getFullYear();
-        const key = `${nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)}-${año}`;
-
-        meses.push(key);
-        actual.setMonth(actual.getMonth() + 1); 
+        if(resumenPagos.length > 0){
+            const mesesDisponibles = resumenPagos
+              .map(([mes]) => mes) // Extraemos solo los nombres de los meses
+              .sort((a, b) => {
+                const [mesA, añoA] = a.split('-');
+                const [mesB, añoB] = b.split('-');
+          
+                const fechaA = new Date(`${añoA}-${mesANumero(mesA)}-01`);
+                const fechaB = new Date(`${añoB}-${mesANumero(mesB)}-01`);
+          
+                return fechaA - fechaB;
+              });
+          
+            // console.log("Meses Disponibles Ordenados:", mesesDisponibles);
+          
+            const inicio = new Date(fechaInicio);
+            // const fin = new Date(`${mesesDisponibles.at(-1).split('-')[1]}-${mesANumero(mesesDisponibles.at(-1).split('-')[0])}-01`);
+          
+            const [mesTexto, año] = mesesDisponibles.at(-1).split('-');
+            const mes = mesANumero(mesTexto); // Suponiendo que devuelve el número del mes (Ej: Marzo → 3)
+            const fin = new Date(año, mes - 1, 1); // mes - 1 porque en JS enero = 0, febrero = 1, marzo = 2...
+    
+            // console.log("Fecha Fin:", fin);
+    
+            fin.setMonth(fin.getMonth() + 1, 0);
+          
+            let meses = [];
+            let actual = new Date(inicio);
+    
+            while (actual <= fin) {  
+            const nombreMes = actual.toLocaleString('es-ES', { month: 'long' });
+            const año = actual.getFullYear();
+            const key = `${nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)}-${año}`;
+    
+            meses.push(key);
+            actual.setMonth(actual.getMonth() + 1); 
+            }
+    
+            return meses;
         }
-
-        return meses;
     };
 
    
@@ -73,7 +73,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
         mesesPago = generarRangoMeses(fechaContrato, resumenPagos);
       
         // Crear una nueva estructura con objetos
-        mesesPago = mesesPago.map((mes) => {
+        mesesPago = mesesPago?.map((mes) => {
             const pagoEncontrado = resumenPagos.find(r => r[0] === mes); // Buscar coincidencia
     
             return {
@@ -82,18 +82,10 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
             };
         });
     
-        console.log("mesesPagos", mesesPago);
-
-        // deudaAnual = mesesPago.reduce((acc,val)=>{
-        //     console.log("val", val.pago)
-        //     if(val.pago){
-        //         return acc + val.pago.deudaMensual;
-        //     } 
-        //     return acc
-        // },0)
+      
 
         // Extraemos los años únicos
-        deudasPorAño = mesesPago.reduce((acc, val) => {
+        deudasPorAño = mesesPago?.reduce((acc, val) => {
             const año = val.mes.split("-")[1]; // Extraemos el año del mes
             if (!acc[año]) {
                 acc[año] = { deudaAnual: 0, meses: [] };
@@ -110,18 +102,22 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
             return acc;
         }, {});
 
-        dataPdfPagoTodo = Object.entries(deudasPorAño).map(([año, datos]) => ({
-            año,
-            deudaAnual: datos.deudaAnual,
-            meses: datos.meses
-        }));
+        if(deudasPorAño){
+            dataPdfPagoTodo = Object.entries(deudasPorAño).map(([año, datos]) => ({
+                año,
+                deudaAnual: datos.deudaAnual,
+                meses: datos.meses
+            }));
+        }
     }
 
-    console.log("deudasPorAño", deudasPorAño)
+    // console.log("deudasPorAño", deudasPorAño)
 
    
 
-    console.log("dataPdfPagoTodo",dataPdfPagoTodo)
+    // console.log("dataPdfPagoTodo",dataPdfPagoTodo)
+
+    // console.log("dataPdf",dataPdf)
     
 
     const styles = StyleSheet.create({
@@ -266,7 +262,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
         },
       });
     let nameMercado;
-    dataPdf.length > 0 ? dataPdf?.map((row)=> nameMercado = row.mercado.nombre) : dataPdfPago.length > 0 ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : dataPdfObservaciones.length > 0 ? dataPdfObservaciones.map((row)=> nameMercado = row.mercado.nombre) : nameMercado = "Este Mercado No Tiene Puestros Asignados"
+    dataPdf.length > 0 && dataPdf[0].reporte  ? dataPdf[0].reporte.map((row)=> nameMercado = row.mercado?.nombre) : dataPdfPago.length > 0 && dataPdfPago[0].pago ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : dataPdfObservaciones.length > 0 ? dataPdfObservaciones.map((row)=> nameMercado = row.mercado.nombre) : nameMercado = "Sin Registros asignados"
     
     let dias ;
     let año;
@@ -282,7 +278,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
         "Junio", "Julio", "Agosto", "Septiembre", 
         "Octubre", "Noviembre", "Diciembre"
     ];
-    // console.log("dataPdfPago", dataPdfPago);
+    // console.log("datapdfpagoTodo", dataPdfPagoTodo);
     // console.log("dataPdfCONTRATO", dataPdfContrato);
     // console.log("dias", dias);
     // console.log("año", año);
@@ -291,13 +287,13 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
     return (
        
         <Document>
-        <Page size="A4" style={styles.page}>
+        <Page key="page1" size="A4" style={styles.page}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.p}>GOBIERNO AUTONOMO MUNICIPAL DE TARIJA</Text>
                         <Text style={styles.p}>Direccion de Orden Y seguridad Ciudadana</Text>
                         <Text style={styles.p}>Unidad Tecnica De Mercados Municipales</Text>
                         {
-                            dataPdf.length > 0 ? <Text style={styles.header}>Reporte De Mercados</Text> : dataPdfPago.length > 0 ?
+                            dataPdf.length > 0 && dataPdf[0].reporte ? <Text style={styles.header}>Reporte De Mercados</Text> : dataPdfPago.length > 0 ?
                             <Text style={styles.header}>Reporte De Pagos</Text> : dataPdfContrato.length > 0 ? <Text style={styles.header}>Acta De Entrega De Puesto De Venta</Text> : 
                             dataPdfObservaciones.length > 0 ? <Text style={styles.header}>Reporte De Observaciones</Text> : dataPdfPagoTodo.length > 0 ? <Text style={styles.header}>Reporte De Pago Anual</Text> : null
 
@@ -307,7 +303,9 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
                     </View>
                     {
                         dataPdfPagoTodo.length > 0 ?
-                        null
+                        <Text style={styles.textHeader}>
+                            {`Sin Registros`}
+                        </Text>
                         :
                     <Text style={styles.textHeader}>
                             {`Mercado: ${nameMercado}`}
@@ -315,11 +313,11 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
 
                     }
                     {
-                         dataPdf.length > 0 ? 
+                         dataPdf.length > 0 && dataPdf[0].reporte ?          
                             <Text style={styles.headerArrendatario}>
-                                    {'Arrendatarios: '}
+                                    {'Arrendatario '}
                             </Text>
-                            : dataPdfPago.length > 0 ?
+                            : dataPdfPago.length > 0 && dataPdfPago[0].pago ?
                             <Text style={styles.headerArrendatario}>
                                     {'Pago: '}
                             </Text>
@@ -330,33 +328,51 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
                             : null
                     }
             {
-                 dataPdf.length > 0 ?  dataPdf.map((row, i) => (
+                 dataPdf.length > 0 && dataPdf[0].reporte  ?  dataPdf[0].reporte.map((row, i) => (
                     <View style={styles.section} key={i}>
                         
                         
-                        <Text style={styles.text}>
-                            {`Nombre: ${row.name} ${row.lastName}`}
+                        <Text style={styles.headerTextPago}>
+                            {`Nombre`}
                         </Text>
                         <Text style={styles.text}>
-                            {`Cédula: ${row.cedula}`}
+                            {`${row.name} ${row.lastName}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Cédula`}
                         </Text>
                         <Text style={styles.text}>
-                            {`Teléfono: ${row.phone}`}
+                            {`${row.cedula}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Teléfono`}
                         </Text>
                         <Text style={styles.text}>
-                            {`Direccion: ${row.address}`}
+                            {`${row.phone}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Direccion`}
                         </Text>
                         <Text style={styles.text}>
-                            {`Fecha De Contrato: ${row.local.map((row)=>row.fechaDeContrato)}`}
+                            {`${row.address}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Fecha De Contrato`}
                         </Text>
                         <Text style={styles.text}>
-                            {`Puesto Numero: ${row.local.map((row)=>row.number)}`}
+                            {`${row?.local?.map((row)=>row.fechaDeContrato)}`}
+                        </Text>
+                        <Text style={styles.headerTextPago}>
+                            {`Puesto Numero`}
+                        </Text>
+                        <Text style={styles.text}>
+                            {`${row?.local?.map((row)=>row.number)}`}
                         </Text>
                     </View>
                     
 
                 ))
-                : dataPdfPago.length > 0 ?
+                : dataPdfPago.length > 0 && dataPdfPago[0].pago ?
                 dataPdfPago.map((row, i)=>(
                     <View style={styles.sectionPago} key={i}>
                         
@@ -365,55 +381,55 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
                             {'Arrendatario:' } 
                         </Text>
                         <Text style={styles.textPago}>
-                            {`${row.pago.arrendatario.name} ${row.pago.arrendatario.lastName}`}
+                            {`${row.pago?.arrendatario.name} ${row.pago?.arrendatario.lastName}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {`Cédula: `}
                         </Text>
                         <Text style={styles.textPago}>
-                            {`${row.pago.arrendatario.cedula}`}
+                            {`${row.pago?.arrendatario.cedula}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {`Teléfono: `}
                         </Text>
                         <Text style={styles.textPago}>
-                            {` ${row.pago.arrendatario.phone}`}
+                            {` ${row.pago?.arrendatario.phone}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {`Direccion:`}
                         </Text>
                         <Text style={styles.textPago}>
-                            {` ${row.pago.arrendatario.address}`}
+                            {` ${row.pago?.arrendatario.address}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {`Fecha De Pago:`}
                         </Text>
                         <Text style={styles.textPago}>
-                            {`${row.pago.fechaPago.split('T')[0]}`}
+                            {`${row.pago?.fechaPago.split('T')[0]}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {`Local Numero:`}
                         </Text>
                         <Text style={styles.textPago}>
-                            {`${row.pago.local.number}`}
+                            {`${row.pago?.local.number}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {`Estado:`}
                         </Text>
                         <Text style={styles.textPago}>
-                            {`${row.pago.local.status}`}
+                            {`${row.pago?.local.status}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {`Monto:`}
                         </Text>
                         <Text style={styles.textPago}>
-                            {`${row.pago.monto}`}
+                            {`${row.pago?.monto}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {`Monto Por Dia:`}
                         </Text>
                         <Text style={styles.textPago}>
-                            {`${row.pago.montoPorDia}`}
+                            {`${row.pago?.montoPorDia}`}
                         </Text>
                         <Text style={styles.headerTextPago}>
                             {/* {`Dias Pagados : ${row.pago.diasPagados.map((row)=> row)}`} */}
@@ -421,7 +437,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
                         </Text>
                         <Text style={styles.textPago}>
                             {/* {`Dias Pagados : ${row.pago.diasPagados.map((row)=> row)}`} */}
-                            {`${row.pago.diasPagados.join(', ')}`}
+                            {`${row.pago?.diasPagados.join(', ')}`}
                         </Text>
                     </View>
                 )
@@ -558,22 +574,8 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
                         <Text style={stylesTable.tableCellHeader2}>Deuda Anual</Text>
                 </View>
 
-                 {/* Filas de la tabla */}
-                 {/* {
-                            mesesPago.map((row,i)=>(
-                                <View style={stylesTable.tableRow} key={i}>
-                                   <Text style={stylesTable.tableCell2}>{row.mes}</Text>
-                                   <Text style={stylesTable.tableCell2}>{row.pago?.diasTotales ? row.pago?.diasTotales : "Sin Registro de pago" }</Text>
-                                   <Text style={stylesTable.tableCell2}>{row.pago?.diasPagados ? row.pago?.diasPagados : "0" }</Text>
-                                   <Text style={stylesTable.tableCell2}>{row.pago?.diasAdeudados ? row.pago?.diasAdeudados : "0" }</Text>
-                                   <Text style={stylesTable.tableCell2}>{row.pago?.deudaMensual ? row.pago?.deudaMensual : "-" }</Text>
-                                   <Text style={stylesTable.tableCell2}>{'-'}</Text>
-                                </View>
-                            ))
-                  } */}
-
                     {/* Filas de la tabla */}
-        {row.meses.map((mesData, j) => (
+        {row.meses?.map((mesData, j) => (
             <View style={stylesTable.tableRow} key={j}>
                 {/* <Text style={stylesTable.tableCell2}>{row.año}</Text> */}
                 <Text style={stylesTable.tableCell2}>{mesData.mes}</Text>
@@ -612,20 +614,22 @@ const PdfRenderer = () => {
     const infoPdf = async () => {
         try {
             const response = await getInfoPdf(place);
-            const noIncludesPago = response.data.every(row => !row.pago); 
-            const noIncludesContrato = response.data.every(row => !row.contrato); 
-            const noIncludesObservaciones = response.data.every(row => !row.observacion); 
-            const noIncludesPagoTodo = response.data.every(row => !row.fechaContrato);  
+            const noIncludesPago = response.data.every(row => !("pago" in row)); 
+            const noIncludesContrato = response.data.every(row => !("contrato" in row)); 
+            const noIncludesObservaciones = response.data.every(row => !("observacion" in row)); 
+            const noIncludesPagoTodo = response.data.every(row => !("fechaContrato" in row));  
+            const noIncludesReportes = response.data.every(row => !("reporte" in row));
+
             if (JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesContrato && noIncludesObservaciones && noIncludesPagoTodo) {
                 setDataPdf(response.data);
                 console.log("entroo 1111");
-            }else if(JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesContrato && noIncludesObservaciones && noIncludesPagoTodo) {
+            }else if(JSON.stringify(dataPdfPago) !== JSON.stringify(response.data) && noIncludesContrato && noIncludesObservaciones && noIncludesPagoTodo && noIncludesReportes) {
                 setDataPdfPago(response.data)
                 console.log("entrooo 2222");
-            }else if(JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesObservaciones && noIncludesPagoTodo){
+            }else if(JSON.stringify(dataPdfContrato) !== JSON.stringify(response.data) && noIncludesPago && noIncludesObservaciones && noIncludesPagoTodo){
                 setDataPdfContrato(response.data)
                 console.log("entroo3333");
-            }else if(JSON.stringify(dataPdf) !== JSON.stringify(response.data) && noIncludesPago && noIncludesContrato && noIncludesPagoTodo) {
+            }else if(JSON.stringify(dataPdfObservaciones) !== JSON.stringify(response.data) && noIncludesPago && noIncludesContrato && noIncludesPagoTodo) {
                 console.log("entroo444");
 
                 setDataPdfObservaciones(response.data)
@@ -641,25 +645,7 @@ const PdfRenderer = () => {
         infoPdf()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
-    console.log("dataPdfPagoTodo", dataPdfPagoTodo);
-    // Función para manejar la impresión
-    // const handlePrint = async () => {
-    //     const blob = await pdf(<MyDocument />).toBlob(); // Genera un blob del PDF
-    //     const url = URL.createObjectURL(blob); // Crea una URL para el blob
-
-    //     // Crea un iframe temporal para cargar el PDF y enviar la orden de impresión
-    //     const iframe = document.createElement("iframe");
-    //     iframe.style.position = "absolute";
-    //     iframe.style.top = "-1000px";
-    //     iframe.src = url;
-
-    //     iframe.onload = () => {
-    //         iframe.contentWindow.print(); // Ejecuta la impresión
-    //         URL.revokeObjectURL(url); // Limpia la URL temporal
-    //     };
-
-    //     document.body.appendChild(iframe);
-    // };
+  
  
     const handlePrint = React.useCallback(async () => {
         const blob = await pdf(<MyDocument dataPdf={dataPdf} dataPdfPago={dataPdfPago} dataPdfContrato={dataPdfContrato} dataPdfObservaciones={dataPdfObservaciones} dataPdfPagoTodo={dataPdfPagoTodo} />).toBlob();
