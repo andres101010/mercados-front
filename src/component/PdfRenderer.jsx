@@ -9,7 +9,7 @@ import { getInfoPdf } from "../services/pdf";
 
 const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones, dataPdfPagoTodo}) => {
 
-    
+    // console.log("dataaaa", dataPdfPagoTodo)
     const generarRangoMeses = (fechaInicio, resumenPagos) => {
         if(resumenPagos.length > 0){
             const mesesDisponibles = resumenPagos
@@ -30,17 +30,21 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
             // const fin = new Date(`${mesesDisponibles.at(-1).split('-')[1]}-${mesANumero(mesesDisponibles.at(-1).split('-')[0])}-01`);
           
             const [mesTexto, año] = mesesDisponibles.at(-1).split('-');
+            // console.log("mesestexto", mesTexto)
+            // console.log("año", año)
             const mes = mesANumero(mesTexto); // Suponiendo que devuelve el número del mes (Ej: Marzo → 3)
             const fin = new Date(año, mes - 1, 1); // mes - 1 porque en JS enero = 0, febrero = 1, marzo = 2...
-    
-            // console.log("Fecha Fin:", fin);
-    
+            // console.log("mes", mes)  
+            
             fin.setMonth(fin.getMonth() + 1, 0);
-          
+            
             let meses = [];
+            // console.log("inicio", inicio)
+            // console.log("Fecha Fin:", fin);
             let actual = new Date(inicio);
-    
+            //   console.log("actual", actual)
             while (actual <= fin) {  
+                // console.log("entrooooo whileeeeeeeee")
             const nombreMes = actual.toLocaleString('es-ES', { month: 'long' });
             const año = actual.getFullYear();
             const key = `${nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)}-${año}`;
@@ -69,9 +73,10 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
       let deudasPorAño;
 
     if (dataPdfPagoTodo.length > 0) {
+        // console.log("entrooo")
         const { fechaContrato, resumenPagos } = dataPdfPagoTodo[0];
         mesesPago = generarRangoMeses(fechaContrato, resumenPagos);
-      
+        // console.log("mesespagoooooo", mesesPago)
         // Crear una nueva estructura con objetos
         mesesPago = mesesPago?.map((mes) => {
             const pagoEncontrado = resumenPagos.find(r => r[0] === mes); // Buscar coincidencia
@@ -83,7 +88,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
         });
     
       
-
+        // console.log("mesespagoo", mesesPago)
         // Extraemos los años únicos
         deudasPorAño = mesesPago?.reduce((acc, val) => {
             const año = val.mes.split("-")[1]; // Extraemos el año del mes
@@ -102,13 +107,17 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
             return acc;
         }, {});
 
+        // console.log("deuda Añooo", deudasPorAño)
         if(deudasPorAño){
             dataPdfPagoTodo = Object.entries(deudasPorAño).map(([año, datos]) => ({
                 año,
-                deudaAnual: datos.deudaAnual,
+                // deudaAnual: datos.deudaAnual,
+                deudaAnual: Number(datos.deudaAnual.toFixed(2)),
                 meses: datos.meses
             }));
         }
+    // console.log("dataPdfPagoTodoaaaaaaaaaa",dataPdfPagoTodo)
+
     }
 
     // console.log("deudasPorAño", deudasPorAño)
@@ -262,7 +271,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
         },
       });
     let nameMercado;
-    dataPdf.length > 0 && dataPdf[0].reporte  ? dataPdf[0].reporte.map((row)=> nameMercado = row.mercado?.nombre) : dataPdfPago.length > 0 && dataPdfPago[0].pago ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : dataPdfObservaciones.length > 0 ? dataPdfObservaciones.map((row)=> nameMercado = row.mercado.nombre) : nameMercado = "Sin Registros asignados"
+    dataPdf.length > 0 && dataPdf[0].reporte  ? dataPdf[0].reporte.map((row)=> nameMercado = row.mercado?.nombre) : dataPdfPago.length > 0 && dataPdfPago[0].pago ? dataPdfPago.map((row)=> nameMercado =  row.pago.local.mercado.nombre) : dataPdfContrato.length > 0 ? dataPdfContrato.map((row)=> nameMercado =  row.contrato.mercado.nombre) : dataPdfObservaciones.length > 0 ? dataPdfObservaciones.map((row)=> nameMercado = row.mercado.nombre)  : nameMercado = "Sin Registros asignados"
     
     let dias ;
     let año;
@@ -303,9 +312,7 @@ const MyDocument = ({dataPdf, dataPdfPago, dataPdfContrato, dataPdfObservaciones
                     </View>
                     {
                         dataPdfPagoTodo.length > 0 ?
-                        <Text style={styles.textHeader}>
-                            {`Sin Registros`}
-                        </Text>
+                        null
                         :
                     <Text style={styles.textHeader}>
                             {`Mercado: ${nameMercado}`}
@@ -614,6 +621,7 @@ const PdfRenderer = () => {
     const infoPdf = async () => {
         try {
             const response = await getInfoPdf(place);
+            // console.log("res", response)
             const noIncludesPago = response.data.every(row => !("pago" in row)); 
             const noIncludesContrato = response.data.every(row => !("contrato" in row)); 
             const noIncludesObservaciones = response.data.every(row => !("observacion" in row)); 
