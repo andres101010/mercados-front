@@ -17,6 +17,8 @@ const UsePuestos = () => {
     const [showModalObservacion, setShowModalObservacion] = useState(false)
     const [idpuesto, setIdpuesto] = useState(null)
 
+    const [showSpinner, setShowSpinner] = useState(false)
+
     // const [showModalContrato, setShowModalContrato] = useState(false)
 
     // const openModalContrato = (id) => {
@@ -98,7 +100,10 @@ const UsePuestos = () => {
     idpuesto,
     setIdpuesto,
 
-    observationForm
+    observationForm,
+
+    showSpinner,
+    setShowSpinner
    }
     
   

@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { Link, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { getAllArrendatarios } from '../services/arrendatario.js';
+import Spinner  from "../component/spinner/Spinner.jsx"
 const Puestos = () => {
   // const [form] = Form.useForm();
 
@@ -39,7 +40,10 @@ const Puestos = () => {
     openModalObservacion,
     idpuesto,
     // setIdpuesto,
-    observationForm
+    observationForm,
+
+    showSpinner,
+    setShowSpinner
 
   } = UsePuestos();
 
@@ -194,6 +198,7 @@ const Puestos = () => {
 
   const reset = async (id) => {
     try {
+      setShowSpinner(true)
       await resetLocal(id)
       Swal.fire({
         icon: 'success',
@@ -202,6 +207,7 @@ const Puestos = () => {
         confirmButtonText: 'Aceptar'
     });
       await handleGetLocal(place) 
+      setShowSpinner(false)
     } catch (error) {
       console.log("error", error);
       let message = error.response.data.message;
@@ -211,6 +217,7 @@ const Puestos = () => {
         text: message,
         confirmButtonText: 'Aceptar'
     });
+    setShowSpinner(false)
       throw error;
     }
   }
@@ -442,6 +449,10 @@ const Puestos = () => {
                     <div>
                       <button type="button" className="btn btn-info fa fa-plus" onClick={() => handleCreateLocal() }> Agregar Puesto</button>
                     </div>
+                    {
+                      showSpinner ?
+                      <Spinner />
+                      :
                     <table id="datatable-buttons" className="table table-striped table-bordered" style={{width:"100%"}}>
                       <thead>
                         <tr>
@@ -544,6 +555,7 @@ const Puestos = () => {
 
 
                     </table>
+                    }
                     </div>
 
                   </div>

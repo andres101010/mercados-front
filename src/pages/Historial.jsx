@@ -52,6 +52,7 @@ const Historial = () => {
         historial();
       // eslint-disable-next-line react-hooks/exhaustive-deps
       },[selectArrendatario])
+      // console.log("historial",historial)
   return (
     <div className="pageResponsive">
          <div className="page-title">
@@ -159,11 +160,11 @@ const Historial = () => {
 
                                       <div style={{width:'100%'}}>
                                         {
-                                          historial.historial?.length == 0 ? 
+                                          historial.data?.historial?.length == 0 ? 
                                           <div style={{textAlign:'center', marginTop:'40px'}}>
                                             <h1>Este Arrendado No Tiene Historial </h1>
                                           </div> :
-                                          historial.historial?.map((row,i)=>(
+                                          historial.data?.historial?.map((row,i)=>(
                                             <div key={i} style={{textAlign:'center', marginTop:'40px'}}>
                                               <h1>HISTORIAL</h1>
                                               <h1>{ `N° ${i + 1}`}</h1>
@@ -185,6 +186,21 @@ const Historial = () => {
                                                 ))
                                               }
                                             </div>
+                                          ))
+                                        }
+                                        {
+                                          historial.data?.pagos?.length == 0 ?
+                                          <h2>No Tiene Pagos Hechos</h2>
+                                          :
+                                          historial.data?.pagos?.map((row, i)=>(
+                                          <div key={i} style={{textAlign:'center', marginTop:'40px'}}>
+                                            <h1>Pagos</h1>
+                                            <h1>{ `N° ${i + 1}`}</h1>
+                                            <h2>{`Mes: ${row.mes}`}</h2>
+                                            <h2>{`Dias Pagados: ${row.diasPagados.length}`}</h2>
+                                            <h2>{`Monto: ${row.monto}`}</h2>
+                                            <h2>{`Fecha de Pago: ${row.fechaPago}`}</h2>
+                                          </div>
                                           ))
                                         }
                                       </div>
